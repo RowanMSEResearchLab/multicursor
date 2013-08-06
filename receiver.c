@@ -107,7 +107,7 @@ void mouseMove ( int x, int y ) {
 
 // Click mouse
 void mouseClick ( int x, int y, int buttonId ) {
-	
+	// Mouse must be moved before clicking???
 	xcbMove ( x, y );
 	xcbClick ( buttonId );
 	
@@ -155,5 +155,3 @@ int main ( int argc, char * argv[] ) {
 	
 	
 }
-
-
