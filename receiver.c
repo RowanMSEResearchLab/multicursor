@@ -89,14 +89,22 @@ void cleanup ( ) {
 void getNextEvent ( MouseEvent * event ) {
 	
 	int x, y;
+	int c;
 	
-	printf ("Enter (x,y): ");
-	scanf ("%d %d", &x, &y);
+	printf ("Enter (x,y,comm): ");
+	scanf ("%d %d %d", &x, &y, &c);
 	
 	event->x = x;
 	event->y = y;
-	event->type = MC_BUTTON_UP;
-	
+	switch(c) //modifications by Ken
+	{
+		case 1: mouseMove(x, y);
+			break;
+		case 2: mouseClick(x, y, 1);
+			break;
+		default: printf("NO, NO, NO. THAT WASN'T PART OF THE DEAL. SIGNED: THE MAYOR.\n");
+			break; 
+	}
 }
 
 // Move mouse
