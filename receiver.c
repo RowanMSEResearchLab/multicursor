@@ -15,6 +15,8 @@
 #define MC_BUTTON_UP 2
 #define MC_BUTTON_MOVE 3
 
+//mask for active mouses
+int ACTIVE_CURSORS = 0x00;
 
 typedef struct _MouseEvent {
 	
@@ -31,6 +33,25 @@ int screen_number = 0;
 xcb_setup_t *setup;
 xcb_screen_iterator_t screen_iter;
 int theRoot;
+
+//sets the cursorNumberth cursor to active
+void setCursorActive(int cursorNumber)
+{
+	ACTIVE_CURSORS |= 1<<cursorNumber;
+}
+
+//sets the cursorNumberth cursor to inactive
+void setCursorInactive(int cursorNumber)
+{
+	ACTIVE_CURSORS &= ~(1<<cursorNumber);
+}
+
+//sees if the cursorNumberth bit is set to active
+//returns 1 if that cursor is active, 0 otherwise
+int isActiveCursor(int cursorNumber)
+{
+	return (ACTIVE_CURSORS & (1<<cursorNumber)) != 0 ? 1 : 0;
+}
 
 // Initialize the xcb connection and xcb globals
 void xcbInit ( ) {
