@@ -96,14 +96,13 @@ void getNextEvent ( MouseEvent * event ) {
 	
 	event->x = x;
 	event->y = y;
-	switch(c) //modifications by Ken
+	if (c == 1)
 	{
-		case 1: mouseMove(x, y);
-			break;
-		case 2: mouseClick(x, y, 1);
-			break;
-		default: printf("NO, NO, NO. THAT WASN'T PART OF THE DEAL. SIGNED: THE MAYOR.\n");
-			break; 
+		event->type = MC_BUTTON_MOVE;
+	}
+	else //c == 2
+	{
+		event->type = MC_BUTTON_UP;
 	}
 }
 
