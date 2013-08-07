@@ -136,7 +136,7 @@ void processEvent ( MouseEvent * event ) {
 		
 	case MC_BUTTON_MOVE:
 		
-		break;
+		mouseMove(event->x, event->y);
 	}	
 	
 	xcb_flush( display );
