@@ -19,110 +19,13 @@
 #include <string.h>
 #include <stdlib.h>
 #include <errno.h>
-#include <X11/cursorfont.h>
+
+#include "xcbutil.h"
 #include "mouse.h"
 
 using boost::asio::ip::tcp;
+using namespace std;
 
-
-
-// XCB globals
-xcb_connection_t * display = (xcb_connection_t *) NULL;
-int screen_number = 0;
-xcb_setup_t *setup;
-xcb_screen_iterator_t screen_iter;
-int theRoot;
-
-// Initialize the xcb connection and xcb globals
-void xcbInit ( ) {
-    
-    display = xcb_connect ( NULL, &screen_number);
-    if (xcb_connection_has_error(display)) {
-    	fprintf (stderr, "Unable to open display\n");
-    	
-    	exit (1);
-    }
-    setup = (xcb_setup_t *) xcb_get_setup ( display );
-    screen_iter = xcb_setup_roots_iterator(setup);
-    
-    int i;
-    for (i = 0; i < screen_number; i++)
-    	xcb_screen_next(&screen_iter);
-    theRoot = screen_iter.data->root;
-    
-}
-
-void xcbDestroy  ( ) {
-    xcb_disconnect ( display );
-}
-
-// xcb function that clicks button at the current location
-void xcbClick ( int buttonId ) {
-    
-    xcb_test_fake_input( display, XCB_BUTTON_PRESS, buttonId, 0, XCB_NONE, 0, 0, 0 );
-    xcb_test_fake_input( display, XCB_BUTTON_RELEASE, buttonId, 0, XCB_NONE, 0, 0, 0 );
-    
-}
-
-// xcb function that moves the cursor to the given location
-void xcbMove ( int x, int y ) {
-    
-    xcb_test_fake_input ( display, XCB_MOTION_NOTIFY, 0, 0, theRoot, x, y , 0);
-    
-}
-
-xcb_cursor_t
-Create_Font_Cursor (xcb_connection_t *dpy, uint16_t glyph)
-{
-    static xcb_font_t cursor_font;
-    xcb_cursor_t cursor;
-    
-    if (!cursor_font) {
-    	cursor_font = xcb_generate_id (dpy);
-    	xcb_open_font (dpy, cursor_font, strlen ("cursor"), "cursor");
-    }
-    
-    cursor = xcb_generate_id (dpy);
-    xcb_create_glyph_cursor (dpy, cursor, cursor_font, cursor_font,
-    	glyph, glyph + 1,
-    	0, 0, 0, 0xffff, 0xffff, 0xffff);  /* rgb, rgb */
-    
-    return cursor;
-}
-
-void Fatal_Error ( const char * message ) {
-    printf ("%s\n", message);
-    exit ( 0 );
-}
-
-
-void grabMouse ( ) {
-    
-    
-    xcb_cursor_t cursor;
-    cursor = Create_Font_Cursor (display, XC_crosshair);
-    xcb_grab_pointer_cookie_t gpcookie;
-    
-    gpcookie = xcb_grab_pointer(
-    	display,
-    	0,
-    	theRoot,       
-    	XCB_EVENT_MASK_BUTTON_PRESS | 
-    	XCB_EVENT_MASK_BUTTON_RELEASE| 
-    	XCB_EVENT_MASK_POINTER_MOTION ,
-    	XCB_GRAB_MODE_ASYNC, 
-    	XCB_GRAB_MODE_ASYNC,
-    	theRoot, 
-    	cursor, 
-    	XCB_TIME_CURRENT_TIME);
-    
-    xcb_grab_pointer_reply_t * gpreply;
-    xcb_generic_error_t *err;
-    
-    gpreply = xcb_grab_pointer_reply (display, gpcookie, &err);
-    if (gpreply->status != XCB_GRAB_STATUS_SUCCESS)
-    	Fatal_Error ("Can't grab the mouse.");
-}
 
 // Perform all necessary initializations
 void initialize ( ) {
@@ -157,10 +60,10 @@ MouseEvent event;
 
 void send ( tcp::socket & sock) {
     
-    std::cout << "Sending : " << event.type << " " << event.mouseId << " " 
-    << event.buttonId << " " << event.x << " " << event.y << std::endl;
+    cout << "Sending : " << event.type << " " << event.mouseId << " " 
+    << event.buttonId << " " << event.x << " " << event.y << endl;
     
-    std::vector<uint16_t> vec(5,0);
+    std::vector<uint16_t> vec(sizeof(MouseEvent)/sizeof(uint16_t),0);
     
     vec[0] = htons(event.type);
     vec[1] = htons(event.mouseId);
@@ -170,15 +73,15 @@ void send ( tcp::socket & sock) {
     
     
     //boost::asio::const_buffers_1 mybuf(vec); // = boost::asio::buffer buffer;
-       
-       
+    
+    
     // asio::async_write(socket,buffer((char*)&net.front(),6),callback);
     /* boost::system::error_code error;
     
-     boost::asio::io_service io_service;
+    boost::asio::io_service io_service;
     boost::asio::ip::tcp::socket sock (io_service); */
     int num = sock.send ( boost::asio::buffer(vec) );
-    std::cout << "Sent " << num << " bytes" << std::endl;
+    cout << "Sent " << num << " bytes" << endl;
 }
 
 void sendMouseMove (tcp::socket & sock, int x, int y ) {
@@ -223,49 +126,28 @@ int main(int argc, char* argv[])
     {
     	if (argc != 2)
     	{
-    	    std::cerr << "Usage: client <host>" << std::endl;
+    	    std::cerr << "Usage: client <host>" << endl;
     	    return 1;
     	}
     	
-    	    boost::asio::io_service io_service;
-    
-    tcp::resolver resolver(io_service);
-    tcp::resolver::query query(argv[1], "daytime");
-    tcp::resolver::iterator endpoint_iterator = resolver.resolve(query);
-    tcp::resolver::iterator end;
-    
-    tcp::socket socket(io_service);
-    boost::system::error_code error = boost::asio::error::host_not_found;
-    while (error && endpoint_iterator != end)
-    {
-    	socket.close();
-    	socket.connect(*endpoint_iterator++, error);
-    }
-    if (error)
-    	throw boost::system::system_error(error);
-    
-    std::cout << "Connected!" << std::endl;
+    	boost::asio::io_service io_service;
     	
-    	// socket = initNetwork ( argv[1] );
+    	tcp::resolver resolver(io_service);
+    	tcp::resolver::query query(argv[1], "daytime");
+    	tcp::resolver::iterator endpoint_iterator = resolver.resolve(query);
+    	tcp::resolver::iterator end;
     	
-    	//for (;;)
-    	// {
-    	// boost::array<char, 128> buf;
-    	// boost::system::error_code error;
+    	tcp::socket socket(io_service);
+    	boost::system::error_code error = boost::asio::error::host_not_found;
+    	while (error && endpoint_iterator != end)
+    	{
+    	    socket.close();
+    	    socket.connect(*endpoint_iterator++, error);
+    	}
+    	if (error)
+    	    throw boost::system::system_error(error);
     	
-    	// size_t len = socket->read_some(boost::asio::buffer(buf), error);
-    	
-    	// if (error == boost::asio::error::eof)
-    	//   std::cerr << "End" << std::endl;
-    	
-    	
-    	// break; // Connection closed cleanly by peer.
-    	// else if (error)
-    	//    throw boost::system::system_error(error); // Some other error.
-    	
-    	// std::cout.write(buf.data(), len);
-    	
-    	//}
+    	cout << "Connected!" << endl;
     	
 	xcb_generic_event_t * event;
 	
@@ -295,7 +177,10 @@ int main(int argc, char* argv[])
 	    case XCB_MOTION_NOTIFY:
 	    	xcb_motion_notify_event_t *motion;
 	    	motion = (xcb_motion_notify_event_t *)event;
-	    	// sendMouseMove (socket, motion->event_x, motion->event_y );
+	    	//cout << "Motion " << motion->event_x << " " 
+	    	//<< motion->event_y <<endl;
+	    	
+	    	sendMouseMove (socket, motion->event_x, motion->event_y );
 	    	break;
 	    	
 	    default:
@@ -305,7 +190,7 @@ int main(int argc, char* argv[])
     }
     catch (std::exception& e)
     {
-    	std::cerr << e.what() << std::endl;
+    	std::cerr << e.what() << endl;
     }
     
     return 0;

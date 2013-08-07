@@ -11,15 +11,15 @@ receiver: receiver.o
 
 receiver.o:  receiver.c
 
-wall: wall.o 
-	$(CC) -g -o $@ wall.o $(LDFLAGS)
+wall: wall.o  xcbutil.o
+	$(CC) -g -o $@ wall.o xcbutil.o $(LDFLAGS)
 
-wall.o:  wall.cpp
+wall.o:  wall.cpp xcbutil.h
 
-sender: sender.o 
-	$(CC) -g -o $@ sender.o $(LDFLAGS)
+sender: sender.o xcbutil.o
+	$(CC) -g -o $@ sender.o xcbutil.o $(LDFLAGS)
 
-sender.o:  sender.cpp
+sender.o:  sender.cpp xcbutil.h
 
 
 dserver: dserver.o 
