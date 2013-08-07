@@ -102,6 +102,16 @@ void getNextEvent ( MouseEvent * event ) {
 	// Parse command type
 	//1 = mouse move
 	//2 = mouse click
+	switch(t)
+	{
+		case 1: event->type = MC_BUTTON_MOVE;
+			break;
+		case 2: event->type = MC_BUTTON_UP;
+			break;
+		default: printf("NO, NO, NO. THAT WASN'T PART OF THE DEAL. SIGNED: THE MAYOR.\n");
+			break;
+	}
+	/*
 	if (t == 1)
 	{
 		event->type = MC_BUTTON_MOVE;
@@ -110,6 +120,7 @@ void getNextEvent ( MouseEvent * event ) {
 	{
 		event->type = MC_BUTTON_UP;
 	}
+	*/
 }
 
 // Move mouse
