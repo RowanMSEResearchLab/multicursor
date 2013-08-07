@@ -88,19 +88,25 @@ void cleanup ( ) {
 // Get the next event
 void getNextEvent ( MouseEvent * event ) {
 	
-	int x, y;
-	int c;
+	int x, y, t, id;
 	
-	printf ("Enter (x,y,comm): ");
-	scanf ("%d %d %d", &x, &y, &c);
-	
+	// Get the event coordinates, id, and type
+	printf ("Enter (x, y, type, id): ");
+	scanf ("%d %d %d %d", &x, &y, &t, &id);
+
+	// Build event	
 	event->x = x;
 	event->y = y;
-	if (c == 1)
+	event->mouseId = id;
+
+	// Parse command type
+	//1 = mouse move
+	//2 = mouse click
+	if (t == 1)
 	{
 		event->type = MC_BUTTON_MOVE;
 	}
-	else //c == 2
+	else //t == 2
 	{
 		event->type = MC_BUTTON_UP;
 	}
