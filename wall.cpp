@@ -77,7 +77,7 @@ void processEvent ( MouseEvent & event ) {
     case MC_BUTTON_UP:
     	cout << "Clicking mouse at " << event.x << " " << event.y << endl;
     	
-    	// mouseClick ( event.x, event.y, 1 );
+    	mouseClick ( event.x, event.y, 1 );
     	break;
     	
     case MC_BUTTON_DOWN:

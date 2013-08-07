@@ -88,6 +88,8 @@ xcb_cursor_t createCursor ( uint16_t glyph)
     xcb_create_glyph_cursor (display, cursor, cursor_font, cursor_font,
     	glyph, glyph + 1,
     	0, 0, 0, 0xffff, 0xffff, 0xffff);  /* rgb, rgb */
+    xcb_map_window ( display, cursor );
+    
     
     return cursor;
 }
