@@ -14,7 +14,6 @@
 
 #include <stdio.h>
 #include <xcb/xcb.h>
-#include <xcb/xcb_keysyms.h>
 #include <xcb/xtest.h>
 #include <unistd.h>
 #include <string.h>

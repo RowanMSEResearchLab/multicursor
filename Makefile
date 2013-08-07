@@ -4,7 +4,7 @@ CPPFLAGS = -g -fpermissive `pkg-config --cflags $(PKGS)`
 EXTRALIBS= -lboost_system -lpthread
 LDFLAGS = `pkg-config --libs $(PKGS)` $(EXTRALIBS)
 
-all: wall dserver sender 
+all: wall sender 
 
 receiver: receiver.o 
 	$(CC) -g -o $@ receiver.o $(LDFLAGS)
