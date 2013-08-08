@@ -1,7 +1,7 @@
 CC = g++
 PKGS = xcb xcb-xtest 
 CPPFLAGS = -g -fpermissive `pkg-config --cflags $(PKGS)`
-EXTRALIBS= -lboost_system -lpthread
+EXTRALIBS= -lboost_system -lboost_thread -lpthread 
 LDFLAGS = `pkg-config --libs $(PKGS)` $(EXTRALIBS)
 
 all: wall sender 
