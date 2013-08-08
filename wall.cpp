@@ -69,19 +69,31 @@ void mouseClick ( int x, int y, int buttonId ) {
     
 }
 
+
+void mouseUp ( int x, int y, int buttonId ) {
+    
+    xcbMouseUp ( x, y, buttonId );
+}
+
+void mouseDown ( int x, int y, int buttonId ) {
+    
+    xcbMouseDown ( x, y, buttonId );
+}
+
 // Processes one mouse event
 void processEvent ( MouseEvent & event ) {
     
     switch ( event.type ) {
     	
     case MC_BUTTON_UP:
-    	cout << "Clicking mouse at " << event.x << " " << event.y << endl;
+    	// cout << "Clicking mouse at " << event.x << " " << event.y << endl;
     	
-    	mouseClick ( event.x, event.y, 1 );
+    	mouseUp ( event.x, event.y, 1 );
     	break;
     	
     case MC_BUTTON_DOWN:
     	
+    	mouseDown ( event.x, event.y, 1 );
     	break;
     	
     case MC_BUTTON_MOVE:
@@ -109,7 +121,7 @@ int main ( int argc, char * argv[] ) {
     	boost::asio::io_service io_service;
     	MouseEvent event;
     	
-    	tcp::acceptor acceptor(io_service, tcp::endpoint(tcp::v4(), 13));
+    	tcp::acceptor acceptor(io_service, tcp::endpoint(tcp::v4(), MC_PORT));
     	tcp::socket socket(io_service);
     	acceptor.accept(socket);
     	

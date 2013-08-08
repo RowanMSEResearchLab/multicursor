@@ -5,6 +5,8 @@
 #include <xcb/xtest.h>
 #include <X11/cursorfont.h>
 
+#define MC_PORT 13
+
 // Initialize the xcb connection and xcb globals
 void xcbInit ( ) ;
 
@@ -15,6 +17,10 @@ void xcbClick ( int buttonId );
 
 // xcb function that moves the cursor to the given location
 void xcbMove ( int x, int y );
+
+void xcbMouseUp ( int x, int y, int buttonId ) ;
+
+void xcbMouseDown ( int x, int y, int buttonId ) ;
 
 // Creates specified cursor
 xcb_cursor_t createCursor (uint16_t glyph);
