@@ -11,21 +11,17 @@ receiver: receiver.o
 
 receiver.o:  receiver.c
 
-wall: wall.o  xcbutil.o
-	$(CC) -g -o $@ wall.o xcbutil.o $(LDFLAGS)
+wall: wall.o  xcbutil.o serverthread.o
+	$(CC) -g -o $@ wall.o xcbutil.o serverthread.o $(LDFLAGS)
 
-wall.o:  wall.cpp xcbutil.h mouse.h
+wall.o:  wall.cpp xcbutil.h mouse.h serverthread.h
 
 sender: sender.o xcbutil.o
 	$(CC) -g -o $@ sender.o xcbutil.o $(LDFLAGS)
 
 sender.o:  sender.cpp xcbutil.h mouse.h
 
-
-dserver: dserver.o 
-	$(CC) -g -o $@ dserver.o $(LDFLAGS)
-
-dserver.o:  dserver.cpp
+serverthread.o:  serverthread.cpp serverthread.h xcbutil.h mouse.h
 
 
 clean: 
