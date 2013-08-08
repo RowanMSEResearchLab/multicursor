@@ -117,7 +117,7 @@ void sendMouseUp (tcp::socket & sock, int x, int y) {
     
 }
 
-void getWindowDim( tcp::socket & socket, int* dim){
+void getWindowDim( tcp::socket & socket, int * dim){
 	printf("in getwindowdim");
 	boost::system::error_code error;
 	vector<uint16_t> vec(2, 0);
@@ -165,7 +165,7 @@ int main(int argc, char* argv[])
     	
     	cout << "Connected to the world of tomorrow!" << endl;
 
-	int* dim;
+	int dim[2];
 	getWindowDim(socket, dim);
 	printf("stuff");
 
