@@ -116,6 +116,18 @@ void sendMouseUp (tcp::socket & sock, int x, int y) {
     
 }
 
+void getWindowDim( tcp::socket & socket, int* dim){
+	boost::system::error_code error;
+	vector<uint16_t> vec(2, 0);
+
+	std::size_t length = boost::asio::read(socket, boost::asio::buffer(vec), boost::asio::transfer_all(), error);
+
+	dim[0] = ntohs( vec[0] );
+	dim[1] = ntohs ( vec[1] );
+
+	cout << "dim: " << dim[0] << " " << dim[1] << endl;
+
+}
 
 int main(int argc, char* argv[])
 {
@@ -148,6 +160,9 @@ int main(int argc, char* argv[])
     	    throw boost::system::system_error(error);
     	
     	cout << "Connected!" << endl;
+//TODO	
+	int* dim;
+	getWindowDim(socket, dim);
     	
 	xcb_generic_event_t * event;
 	
@@ -195,3 +210,5 @@ int main(int argc, char* argv[])
     
     return 0;
 }
+
+

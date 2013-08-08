@@ -1,5 +1,3 @@
-
-
 #include <iostream>
 #include <string>
 #include <boost/asio.hpp>
@@ -134,6 +132,19 @@ public:
     
 };
 
+
+void sendWindowDim(tcp::socket & sock){
+	int* dim = getResolution();
+	
+	std::vector<uint16_t> vec(2, 0);
+	vec[0] = htons(dim[0]);
+	vec[1] = htons(dim[1]);
+
+	int num = sock.send ( boost::asio::buffer(vec) );
+	cout << "Sent dimension ( "<< dim[0] << " , " << dim[1] << ") " << num << " bytes" << endl;
+
+}
+
 int main ( int argc, char * argv[] ) {
     
     boost::thread_group serverThreads;
@@ -155,7 +166,10 @@ int main ( int argc, char * argv[] ) {
     	acceptor.accept(socket);
     	
     	cout << "Accepted remote mouse connection" << endl;
+
+	sendWindowDim(socket);
     	
+
     	serverThreads.create_thread (ServerThread(socket));
     	
     	serverThreads.join_all ( );
@@ -165,6 +179,7 @@ int main ( int argc, char * argv[] ) {
     	cerr << exc.what() << endl;
     }
     
+
     cleanup ( );
     return 0;
     
