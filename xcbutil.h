@@ -32,6 +32,11 @@ void grabMouse ( ) ;
 
 void moveWindow ( int id, int x, int y );
 
+/**
+	gets the resolution of the root window
+*/
+int* getResolution();
+
 extern xcb_connection_t * display; 
 extern int theRoot; // Root window
 
