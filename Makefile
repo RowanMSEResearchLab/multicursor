@@ -14,12 +14,12 @@ receiver.o:  receiver.c
 wall: wall.o  xcbutil.o
 	$(CC) -g -o $@ wall.o xcbutil.o $(LDFLAGS)
 
-wall.o:  wall.cpp xcbutil.h
+wall.o:  wall.cpp xcbutil.h mouse.h
 
 sender: sender.o xcbutil.o
 	$(CC) -g -o $@ sender.o xcbutil.o $(LDFLAGS)
 
-sender.o:  sender.cpp xcbutil.h
+sender.o:  sender.cpp xcbutil.h mouse.h
 
 
 dserver: dserver.o 
