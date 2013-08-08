@@ -26,6 +26,7 @@
 using boost::asio::ip::tcp;
 using namespace std;
 
+float xscale=0, yscale=0;
 
 // Perform all necessary initializations
 void initialize ( ) {
@@ -89,8 +90,8 @@ void sendMouseMove (tcp::socket & sock, int x, int y ) {
     event.type = MC_BUTTON_MOVE;
     event.mouseId = 1;
     event.buttonId = 1;
-    event.x = x;
-    event.y = y;
+    event.x = x * xscale;
+    event.y = y * yscale;
     send (sock );
     
 }
@@ -117,15 +118,18 @@ void sendMouseUp (tcp::socket & sock, int x, int y) {
 }
 
 void getWindowDim( tcp::socket & socket, int* dim){
+	printf("in getwindowdim");
 	boost::system::error_code error;
 	vector<uint16_t> vec(2, 0);
 
+	printf("are");
 	std::size_t length = boost::asio::read(socket, boost::asio::buffer(vec), boost::asio::transfer_all(), error);
 
+	printf("we");
 	dim[0] = ntohs( vec[0] );
 	dim[1] = ntohs ( vec[1] );
 
-	cout << "dim: " << dim[0] << " " << dim[1] << endl;
+	printf("here");
 
 }
 
@@ -159,10 +163,18 @@ int main(int argc, char* argv[])
     	if (error)
     	    throw boost::system::system_error(error);
     	
-    	cout << "Connected!" << endl;
-//TODO	
+    	cout << "Connected to the world of tomorrow!" << endl;
+
 	int* dim;
 	getWindowDim(socket, dim);
+	printf("stuff");
+
+	cout << "dim: " << dim[0] << " " << dim[1] << endl;
+	
+	int* dimNative = getResolution();
+	xscale = dim[0] / (float) dimNative[0];
+	yscale = dim[1] / (float) dimNative[1];
+
     	
 	xcb_generic_event_t * event;
 	
