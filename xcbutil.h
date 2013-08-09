@@ -4,6 +4,9 @@
 #include <xcb/xcb.h>
 #include <xcb/xtest.h>
 #include <X11/cursorfont.h>
+#include <utility>
+
+using std::pair;
 
 #define MC_PORT 13
 
@@ -35,7 +38,7 @@ void moveWindow ( int id, int x, int y );
 /**
 	gets the resolution of the root window
 */
-int* getResolution();
+pair<int,int> getResolution();
 
 extern xcb_connection_t * display; 
 extern int theRoot; // Root window

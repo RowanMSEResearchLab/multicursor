@@ -57,9 +57,9 @@ void xcbInit ( ) {
 
 int getRoot()
 {
-	if(display == NULL)
-		xcbInit();
-	return theRoot;
+    if(display == NULL)
+    	xcbInit();
+    return theRoot;
 }
 
 void xcbDestroy  ( ) {
@@ -149,21 +149,21 @@ void moveWindow ( int id, int x, int y ) {
     values[0] = x;
     values[1] = y;
     
-   
+    
     xcb_configure_window (display, id, XCB_CONFIG_WINDOW_X | XCB_CONFIG_WINDOW_Y, values);
     
 }
 
-int* getResolution()
+pair<int,int> getResolution()
 {
-	xcb_get_geometry_cookie_t  geomCookie =
-	xcb_get_geometry(display, getRoot());
-	
-	xcb_get_geometry_reply_t  *geom =
-        xcb_get_geometry_reply (display, geomCookie, NULL);
-
-	int* specs = new int[2];
-	specs[0] = geom->width;
-	specs[1] = geom->height;
-	return specs;
+    xcb_get_geometry_cookie_t  geomCookie =
+    xcb_get_geometry(display, getRoot());
+    
+    xcb_get_geometry_reply_t  *geom =
+    xcb_get_geometry_reply (display, geomCookie, NULL);
+    
+    int* specs = new int[2];
+    specs[0] = geom->width;
+    specs[1] = geom->height;
+    return pair<int,int>(geom->width,geom->height);
 }

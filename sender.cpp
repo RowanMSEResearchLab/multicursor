@@ -171,9 +171,9 @@ int main(int argc, char* argv[])
 
 	cout << "dim: " << dim[0] << " " << dim[1] << endl;
 	
-	int* dimNative = getResolution();
-	xscale = dim[0] / (float) dimNative[0];
-	yscale = dim[1] / (float) dimNative[1];
+	pair<int,int> dimNative = getResolution();
+	xscale = dim[0] / (float) dimNative.first;
+	yscale = dim[1] / (float) dimNative.second;
 
     	
 	xcb_generic_event_t * event;

@@ -27,15 +27,15 @@ void cleanup ( ) {
 
 
 void sendWindowDim(tcp::socket & sock){
-	int* dim = getResolution();
-	
-	std::vector<uint16_t> vec(2, 0);
-	vec[0] = htons(dim[0]);
-	vec[1] = htons(dim[1]);
-
-	int num = sock.send ( boost::asio::buffer(vec) );
-	cout << "Sent dimension ( "<< dim[0] << " , " << dim[1] << ") " << num << " bytes" << endl;
-
+    pair<int,int> dim = getResolution();
+    
+    std::vector<uint16_t> vec(2, 0);
+    vec[0] = htons(dim.first); // htons(dim[0]);
+    vec[1] = htons(dim.second); // dim[1]);
+    
+    int num = sock.send ( boost::asio::buffer(vec) );
+    cout << "Sent dimension ( "<< dim.first << " , " << dim.second << ") " << num << " bytes" << endl;
+    
 }
 
 int main ( int argc, char * argv[] ) {
@@ -75,7 +75,7 @@ int main ( int argc, char * argv[] ) {
     	cerr << exc.what() << endl;
     }
     
-
+    
     cleanup ( );
     return 0;
     
