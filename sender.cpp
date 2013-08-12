@@ -106,11 +106,11 @@ void sendMouseDown (tcp::socket & sock, int x, int y, int detail) {
     send ( sock );
 }
 
-void sendMouseUp (tcp::socket & sock, int x, int y) {
+void sendMouseUp (tcp::socket & sock, int x, int y, int detail) {
     
     event.type = MC_BUTTON_UP;
     event.mouseId = 1;
-    event.buttonId = 1;
+    event.buttonId = detail;
     event.x = x;
     event.y = y;
     send ( sock );    
@@ -196,7 +196,7 @@ int main(int argc, char* argv[])
 	    	xcb_button_press_event_t *release;
 	    	
 	    	release = (xcb_button_press_event_t *) event;
-	    	sendMouseUp (socket, release->event_x, release->event_y );
+	    	sendMouseUp (socket, release->event_x, release->event_y, press->detail );
 	    	// getMouseLocation (&windowId, &lx, &ly);
 	    	// printf ("Inside window %d at (%d, %d)\n", windowId, lx, ly);
 	    	break;
