@@ -196,7 +196,7 @@ int main(int argc, char* argv[])
 	    	xcb_button_press_event_t *release;
 	    	
 	    	release = (xcb_button_press_event_t *) event;
-	    	sendMouseUp (socket, release->event_x, release->event_y, press->detail );
+	    	sendMouseUp (socket, release->event_x, release->event_y, release->detail );
 	    	// getMouseLocation (&windowId, &lx, &ly);
 	    	// printf ("Inside window %d at (%d, %d)\n", windowId, lx, ly);
 	    	break;
