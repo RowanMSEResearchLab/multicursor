@@ -3,7 +3,6 @@
 
 using namespace std;
 
-
 ServerThread::ServerThread ( tcp::socket & socket ) : rSocket ( socket ) {
     cursor = createCursor ( XC_pirate );
 
@@ -92,7 +91,11 @@ void ServerThread::processEvent ( MouseEvent & event ) {
     	break;
     	
     case MC_BUTTON_DOWN:
-    	
+    	if(event.buttonId == 2)
+	{
+		printf("asdjfah");
+		rSocket.close();
+	}
     	mouseDown ( event.x, event.y, 1 );
     	break;
     	
