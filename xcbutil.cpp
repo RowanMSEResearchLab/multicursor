@@ -152,6 +152,7 @@ void moveWindow ( int id, int x, int y ) {
     
     xcb_configure_window (display, id, XCB_CONFIG_WINDOW_X | XCB_CONFIG_WINDOW_Y, values);
     
+    xcb_flush ( display );
 }
 
 pair<int,int> getResolution()
