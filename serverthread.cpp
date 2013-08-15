@@ -12,14 +12,16 @@ void ServerThread::operator ( ) () {
     MouseEvent event;
     
     while ( 1 ) {
-    	
-    	
     	getNextEvent ( rSocket, event ) ;
     	processEvent ( event );
-    	
+	//THIS IS VERY UGLY AND A BAD IDEA, BUT IT WORKS. . .
+	if(event.buttonId == 2 && event.type == MC_BUTTON_UP)
+	{
+		rSocket.close();
+		break;
+	}
     }
-    
-    
+	ROAD_CLOSED
 }
 
 
@@ -86,22 +88,14 @@ void ServerThread::processEvent ( MouseEvent & event ) {
     	
     case MC_BUTTON_UP:
     	// cout << "Clicking mouse at " << event.x << " " << event.y << endl;
-    	
     	mouseUp ( event.x, event.y, 1 );
     	break;
     	
     case MC_BUTTON_DOWN:
-    	if(event.buttonId == 2)
-	{
-		printf("asdjfah");
-		rSocket.close();
-	}
     	mouseDown ( event.x, event.y, 1 );
     	break;
     	
     case MC_BUTTON_MOVE:
-    	
-    	
     	mouseMove(event.x, event.y);
     	break;
     }	
