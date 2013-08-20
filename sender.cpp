@@ -118,18 +118,14 @@ void sendMouseUp (tcp::socket & sock, int x, int y, int detail) {
 }
 
 void getWindowDim( tcp::socket & socket, int * dim){
-	printf("in getwindowdim");
 	boost::system::error_code error;
 	vector<uint16_t> vec(2, 0);
 
-	printf("are");
 	std::size_t length = boost::asio::read(socket, boost::asio::buffer(vec), boost::asio::transfer_all(), error);
 
-	printf("we");
 	dim[0] = ntohs( vec[0] );
 	dim[1] = ntohs ( vec[1] );
 
-	printf("here");
 
 }
 
@@ -167,7 +163,6 @@ int main(int argc, char* argv[])
 
 	int dim[2];
 	getWindowDim(socket, dim);
-	printf("stuff");
 
 	cout << "dim: " << dim[0] << " " << dim[1] << endl;
 	
@@ -181,7 +176,7 @@ int main(int argc, char* argv[])
 	// Event loop
 	// Wait for button event. Print mouse position on button release and print ouch on button pres
 	
-	while (event = xcb_wait_for_event (display)) {
+	while (socket.is_open() && (event = xcb_wait_for_event (display))) {
 	    switch (event->response_type & ~0x80) {
 	    	
 	    case XCB_BUTTON_PRESS:
@@ -190,6 +185,7 @@ int main(int argc, char* argv[])
 	    	
 	    	press = (xcb_button_press_event_t *) event;
 	    	sendMouseDown (socket, press->event_x, press->event_y, press->detail );
+
 	    	break;
 	    	
 	    case XCB_BUTTON_RELEASE: 
@@ -201,7 +197,12 @@ int main(int argc, char* argv[])
 			break;
 	    	// getMouseLocation (&windowId, &lx, &ly);
 	    	// printf ("Inside window %d at (%d, %d)\n", windowId, lx, ly);
+
+	    	// close socket on keypress
+		if(press->detail == 2)
+			socket.close();
 	    	break;
+	    	
 	    	
 	    case XCB_MOTION_NOTIFY:
 	    	xcb_motion_notify_event_t *motion;
