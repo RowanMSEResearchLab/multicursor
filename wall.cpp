@@ -65,7 +65,6 @@ int main ( int argc, char * argv[] ) {
     	    cout << "Accepted remote mouse connection" << endl;
     	    
     	    serverThreads.create_thread (ServerThread(*pSocket));
-    	    
     	}
     	
     	serverThreads.join_all ( );
