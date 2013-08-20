@@ -5,6 +5,7 @@
 #define MC_BUTTON_DOWN 1
 #define MC_BUTTON_UP 2
 #define MC_BUTTON_MOVE 3
+#define MC_TERMINATE 4
 
 
 typedef struct _MouseEvent {

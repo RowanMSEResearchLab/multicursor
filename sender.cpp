@@ -27,6 +27,7 @@ using boost::asio::ip::tcp;
 using namespace std;
 
 float xscale=0, yscale=0;
+bool terminated = false;
 
 // Perform all necessary initializations
 void initialize ( ) {
@@ -45,7 +46,7 @@ void initNetwork ( char * ip ) {
     
     tcp::socket socket(io_service);
     boost::system::error_code error = boost::asio::error::host_not_found;
-    while (error && endpoint_iterator != end)
+    while (!terminated && error && endpoint_iterator != end)
     {
     	socket.close();
     	socket.connect(*endpoint_iterator++, error);
@@ -81,8 +82,11 @@ void send ( tcp::socket & sock) {
     
     boost::asio::io_service io_service;
     boost::asio::ip::tcp::socket sock (io_service); */
-    int num = sock.send ( boost::asio::buffer(vec) );
-    cout << "Sent " << num << " bytes" << endl;
+	//if(!terminated)
+	//{
+    		int num = sock.send ( boost::asio::buffer(vec) );
+    		cout << "Sent " << num << " bytes" << endl;
+	//}
 }
 
 void sendMouseMove (tcp::socket & sock, int x, int y ) {
@@ -127,6 +131,16 @@ void getWindowDim( tcp::socket & socket, int * dim){
 	dim[1] = ntohs ( vec[1] );
 
 
+}
+
+void terminate(tcp::socket & sock)
+{
+	event.type = MC_TERMINATE;
+	event.mouseId = 1;
+	event.buttonId = 2;
+	event.x = 0;
+	event.y = 0;
+	send(sock);
 }
 
 int main(int argc, char* argv[])
@@ -176,7 +190,7 @@ int main(int argc, char* argv[])
 	// Event loop
 	// Wait for button event. Print mouse position on button release and print ouch on button pres
 	
-	while (socket.is_open() && (event = xcb_wait_for_event (display))) {
+	while( !terminated && socket.is_open() && (event = xcb_wait_for_event (display))) {
 	    switch (event->response_type & ~0x80) {
 	    	
 	    case XCB_BUTTON_PRESS:
@@ -190,20 +204,19 @@ int main(int argc, char* argv[])
 	    	
 	    case XCB_BUTTON_RELEASE: 
 	    	xcb_button_press_event_t *release;
+		
 	    	
 	    	release = (xcb_button_press_event_t *) event;
 	    	sendMouseUp (socket, release->event_x, release->event_y, release->detail );
 		if(release->detail == 2)
-			break;
+		{
+			terminate(socket);
+			terminated = true;
+			return 0;
+		}
 	    	// getMouseLocation (&windowId, &lx, &ly);
 	    	// printf ("Inside window %d at (%d, %d)\n", windowId, lx, ly);
 
-	    	// close socket on keypress
-		if(press->detail == 2)
-		{
-			xcb_flush(display);
-			socket.close();
-		}
 	    	break;
 	    	
 	    	
@@ -220,6 +233,8 @@ int main(int argc, char* argv[])
 	    	break;
 	    }
 	}
+	//xcb_flush(display);
+	//socket.close();
     }
     catch (std::exception& e)
     {
