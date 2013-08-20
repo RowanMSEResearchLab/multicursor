@@ -200,7 +200,10 @@ int main(int argc, char* argv[])
 
 	    	// close socket on keypress
 		if(press->detail == 2)
+		{
+			xcb_flush(display);
 			socket.close();
+		}
 	    	break;
 	    	
 	    	
