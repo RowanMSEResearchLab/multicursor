@@ -4,7 +4,7 @@
 
 using namespace std;
 
-bool terminated = false;
+bool terminated;
 ServerThread::ServerThread ( tcp::socket & socket ) : rSocket ( socket ) {
 	terminated = false;
     cursor = createCursor ( XC_pirate );
@@ -19,6 +19,7 @@ void ServerThread::operator ( ) () {
     	processEvent ( event );
     }
 	ROAD_CLOSED
+	terminated = false;
 }
 
 
