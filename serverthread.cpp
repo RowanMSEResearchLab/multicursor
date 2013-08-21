@@ -4,7 +4,6 @@
 
 using namespace std;
 
-bool terminated;
 ServerThread::ServerThread ( tcp::socket & socket ) : rSocket ( socket ) {
 	terminated = false;
     cursor = createCursor ( XC_pirate );

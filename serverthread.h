@@ -32,6 +32,7 @@ private:
     
     tcp::socket & rSocket;
     int cursor;
+    bool terminated;
 };
 
 #endif
