@@ -66,7 +66,7 @@ Vcursor * Vcursor::getCursor() {
 void Vcursor::show() {
 
 	// TODO: Make the window appear
-	showWindow(id);
+	xcbShowWindow(id);
 	hidden = false;
 
 
@@ -76,7 +76,7 @@ void Vcursor::show() {
 void Vcursor::hide() {
 
 	// TODO make the window disappear possibly by moving it to 0, 0
-	hideWindow(id);
+	xcbHideWindow(id);
 	hidden = true;
 
 

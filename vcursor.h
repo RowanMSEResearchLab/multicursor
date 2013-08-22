@@ -9,8 +9,8 @@ using namespace std;
 class Vcursor {
 	private:
 		Vcursor(int);
-		int id;
-		int windowID;
+		int id; // The mouse id for this cursor
+		int windowID; // the xcb window id for the physical cursor window
 		int xpos, ypos;
 		bool hidden;
 

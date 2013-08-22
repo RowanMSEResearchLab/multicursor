@@ -36,6 +36,11 @@ void grabMouse ( ) ;
 
 void moveWindow ( int id, int x, int y );
 
+void xcbShowWindow ( int id );
+
+void xcbHideWindow ( int id );
+
+
 /**
 	gets the resolution of the root window
 */

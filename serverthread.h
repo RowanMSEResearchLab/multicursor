@@ -3,6 +3,8 @@
 
 #include <boost/asio.hpp>
 #include "mouse.h"
+#include "vcursor.h"
+
 using boost::asio::ip::tcp;
 
 class ServerThread {
@@ -33,6 +35,7 @@ private:
     tcp::socket & rSocket;
     // int cursor;
     Vcursor * cursor;
+    bool terminated;
 };
 
 #endif

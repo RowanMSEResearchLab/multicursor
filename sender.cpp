@@ -122,15 +122,21 @@ void sendMouseUp (tcp::socket & sock, int x, int y, int detail) {
     
 }
 
-void getWindowDim( tcp::socket & socket, pair<int,int> & dim, int & mouseID){
+//TODO  void getWindowDim( tcp::socket & socket, pair<int,int> & dim, int & mouseID){
+void getWindowDim( tcp::socket & socket, int * dim ){
 	boost::system::error_code error;
 	vector<uint16_t> vec(2, 0);
 
 	std::size_t length = boost::asio::read(socket, boost::asio::buffer(vec), boost::asio::transfer_all(), error);
 
 	
+/*
 	dim.first = ntohs( vec[0] );
 	dim.second = ntohs ( vec[1] );
+
+*/
+	dim[0] = ntohs( vec[0] );
+	dim[1] = ntohs ( vec[1] );
 
 
 }
@@ -178,7 +184,8 @@ int main(int argc, char* argv[])
     	cout << "Connected to the world of tomorrow!" << endl;
 
 	int dim[2];
-	getWindowDim(socket, dim, mouseId);
+	getWindowDim(socket, dim);
+	// TODO getWindowDim(socket, dim, mouseId);
 
 	cout << "dim: " << dim[0] << " " << dim[1] << endl;
 	
