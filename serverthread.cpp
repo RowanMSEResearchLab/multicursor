@@ -1,26 +1,25 @@
 #include "serverthread.h"
 #include "xcbutil.h"
+#include "mouse.h"
 
 using namespace std;
 
-
+bool terminated;
 ServerThread::ServerThread ( tcp::socket & socket ) : rSocket ( socket ) {
+	terminated = false;
     cursor = createCursor ( XC_pirate );
 
 }
 
 void ServerThread::operator ( ) () {
     MouseEvent event;
-    
-    while ( 1 ) {
-    	
-    	
+    terminated = false;
+    while ( !terminated ) {
     	getNextEvent ( rSocket, event ) ;
     	processEvent ( event );
-    	
     }
-    
-    
+	ROAD_CLOSED
+	terminated = false;
 }
 
 
@@ -87,20 +86,20 @@ void ServerThread::processEvent ( MouseEvent & event ) {
     	
     case MC_BUTTON_UP:
     	// cout << "Clicking mouse at " << event.x << " " << event.y << endl;
-    	
     	mouseUp ( event.x, event.y, 1 );
     	break;
     	
     case MC_BUTTON_DOWN:
-    	
     	mouseDown ( event.x, event.y, 1 );
     	break;
     	
     case MC_BUTTON_MOVE:
-    	
-    	
     	mouseMove(event.x, event.y);
     	break;
+    case MC_TERMINATE:
+	terminated = true;
+	rSocket.close();
+	break;
     }	
     
     xcb_flush( display );

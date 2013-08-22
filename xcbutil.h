@@ -9,6 +9,7 @@
 using std::pair;
 
 #define MC_PORT 13
+#define ROAD_CLOSED printf("THE ROAD IS CLOSED. SIGNED: THE MAYOR.\n");
 
 // Initialize the xcb connection and xcb globals
 void xcbInit ( ) ;

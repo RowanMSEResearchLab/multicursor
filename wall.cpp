@@ -4,6 +4,7 @@
 #include <boost/thread.hpp>
 #include "serverthread.h"
 #include "xcbutil.h"
+#include "mouse.h"
 
 using boost::asio::ip::tcp;
 using namespace std;
@@ -65,7 +66,6 @@ int main ( int argc, char * argv[] ) {
     	    cout << "Accepted remote mouse connection" << endl;
     	    
     	    serverThreads.create_thread (ServerThread(*pSocket));
-    	    
     	}
     	
     	serverThreads.join_all ( );
