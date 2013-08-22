@@ -25,7 +25,6 @@ typedef struct _MouseEvent {
 	int buttonId;		// Id of button that was clicked
 	int x, y;			// Event location
 	
-	
 } MouseEvent;
 
 // XCB globals
@@ -120,7 +119,7 @@ void getNextEvent ( MouseEvent * event ) {
 	event->y = y;
 	event->mouseId = id;
 
-	// Parse command type
+	// Parse event type
 	//1 = mouse move
 	//2 = mouse click
 	switch(t)
@@ -129,24 +128,14 @@ void getNextEvent ( MouseEvent * event ) {
 			break;
 		case 2: event->type = MC_BUTTON_UP;
 			break;
-		default: printf("NO, NO, NO. THAT WASN'T PART OF THE DEAL. SIGNED: THE MAYOR.\n");
+		default: printf("ERROR: Type must be mouse move (1) or mouse click (2).\n");
 			break;
 	}
-	/*
-	if (t == 1)
-	{
-		event->type = MC_BUTTON_MOVE;
-	}
-	else //t == 2
-	{
-		event->type = MC_BUTTON_UP;
-	}
-	*/
 }
 
 // Move mouse
 void mouseMove ( int x, int y ) {
-	
+
 	xcbMove ( x, y );
 }
 
@@ -184,19 +173,14 @@ void processEvent ( MouseEvent * event ) {
 int main ( int argc, char * argv[] ) {
 	
 	MouseEvent event;
-	
-	initialize ( ) ;
+
+	initialize ( );
 	
 	while ( 1 ) {
-		
-		getNextEvent ( & event ) ;
+		getNextEvent ( & event );
 		processEvent ( & event );
-		
 	}
-	
 	
 	cleanup ( );
 	return 0;
-	
-	
 }

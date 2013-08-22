@@ -4,8 +4,12 @@
 #include <xcb/xcb.h>
 #include <xcb/xtest.h>
 #include <X11/cursorfont.h>
+#include <utility>
+
+using std::pair;
 
 #define MC_PORT 13
+#define ROAD_CLOSED printf("THE ROAD IS CLOSED. SIGNED: THE MAYOR.\n");
 
 // Initialize the xcb connection and xcb globals
 void xcbInit ( ) ;
@@ -31,6 +35,11 @@ xcb_cursor_t createCursor (uint16_t glyph);
 void grabMouse ( ) ;
 
 void moveWindow ( int id, int x, int y );
+
+/**
+	gets the resolution of the root window
+*/
+pair<int,int> getResolution();
 
 extern xcb_connection_t * display; 
 extern int theRoot; // Root window

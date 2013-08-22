@@ -26,6 +26,8 @@
 using boost::asio::ip::tcp;
 using namespace std;
 
+float xscale=0, yscale=0;
+bool terminated = false;
 
 // Perform all necessary initializations
 void initialize ( ) {
@@ -44,7 +46,7 @@ void initNetwork ( char * ip ) {
     
     tcp::socket socket(io_service);
     boost::system::error_code error = boost::asio::error::host_not_found;
-    while (error && endpoint_iterator != end)
+    while (!terminated && error && endpoint_iterator != end)
     {
     	socket.close();
     	socket.connect(*endpoint_iterator++, error);
@@ -80,8 +82,11 @@ void send ( tcp::socket & sock) {
     
     boost::asio::io_service io_service;
     boost::asio::ip::tcp::socket sock (io_service); */
-    int num = sock.send ( boost::asio::buffer(vec) );
-    cout << "Sent " << num << " bytes" << endl;
+	//if(!terminated)
+	//{
+    		int num = sock.send ( boost::asio::buffer(vec) );
+    		cout << "Sent " << num << " bytes" << endl;
+	//}
 }
 
 void sendMouseMove (tcp::socket & sock, int x, int y ) {
@@ -89,33 +94,54 @@ void sendMouseMove (tcp::socket & sock, int x, int y ) {
     event.type = MC_BUTTON_MOVE;
     event.mouseId = 1;
     event.buttonId = 1;
-    event.x = x;
-    event.y = y;
+    event.x = x * xscale;
+    event.y = y * yscale;
     send (sock );
     
 }
 
-void sendMouseDown (tcp::socket & sock, int x, int y) {
+void sendMouseDown (tcp::socket & sock, int x, int y, int detail) {
     
     event.type = MC_BUTTON_DOWN;
     event.mouseId = 1;
-    event.buttonId = 1;
+    event.buttonId = detail;
     event.x = x;
     event.y = y;
     send ( sock );
 }
 
-void sendMouseUp (tcp::socket & sock, int x, int y) {
+void sendMouseUp (tcp::socket & sock, int x, int y, int detail) {
     
     event.type = MC_BUTTON_UP;
     event.mouseId = 1;
-    event.buttonId = 1;
+    event.buttonId = detail;
     event.x = x;
     event.y = y;
     send ( sock );    
     
 }
 
+void getWindowDim( tcp::socket & socket, int * dim){
+	boost::system::error_code error;
+	vector<uint16_t> vec(2, 0);
+
+	std::size_t length = boost::asio::read(socket, boost::asio::buffer(vec), boost::asio::transfer_all(), error);
+
+	dim[0] = ntohs( vec[0] );
+	dim[1] = ntohs ( vec[1] );
+
+
+}
+
+void terminate(tcp::socket & sock)
+{
+	event.type = MC_TERMINATE;
+	event.mouseId = 1;
+	event.buttonId = 2;
+	event.x = 0;
+	event.y = 0;
+	send(sock);
+}
 
 int main(int argc, char* argv[])
 {
@@ -147,14 +173,24 @@ int main(int argc, char* argv[])
     	if (error)
     	    throw boost::system::system_error(error);
     	
-    	cout << "Connected!" << endl;
+    	cout << "Connected to the world of tomorrow!" << endl;
+
+	int dim[2];
+	getWindowDim(socket, dim);
+
+	cout << "dim: " << dim[0] << " " << dim[1] << endl;
+	
+	pair<int,int> dimNative = getResolution();
+	xscale = dim[0] / (float) dimNative.first;
+	yscale = dim[1] / (float) dimNative.second;
+
     	
 	xcb_generic_event_t * event;
 	
 	// Event loop
 	// Wait for button event. Print mouse position on button release and print ouch on button pres
 	
-	while (event = xcb_wait_for_event (display)) {
+	while( !terminated && socket.is_open() && (event = xcb_wait_for_event (display))) {
 	    switch (event->response_type & ~0x80) {
 	    	
 	    case XCB_BUTTON_PRESS:
@@ -162,17 +198,27 @@ int main(int argc, char* argv[])
 	    	xcb_button_press_event_t *press;
 	    	
 	    	press = (xcb_button_press_event_t *) event;
-	    	sendMouseDown (socket, press->event_x, press->event_y );
+	    	sendMouseDown (socket, press->event_x, press->event_y, press->detail );
+
 	    	break;
 	    	
 	    case XCB_BUTTON_RELEASE: 
 	    	xcb_button_press_event_t *release;
+		
 	    	
 	    	release = (xcb_button_press_event_t *) event;
-	    	sendMouseUp (socket, release->event_x, release->event_y );
+	    	sendMouseUp (socket, release->event_x, release->event_y, release->detail );
+		if(release->detail == 2)
+		{
+			terminate(socket);
+			terminated = true;
+			return 0;
+		}
 	    	// getMouseLocation (&windowId, &lx, &ly);
 	    	// printf ("Inside window %d at (%d, %d)\n", windowId, lx, ly);
+
 	    	break;
+	    	
 	    	
 	    case XCB_MOTION_NOTIFY:
 	    	xcb_motion_notify_event_t *motion;
@@ -187,6 +233,8 @@ int main(int argc, char* argv[])
 	    	break;
 	    }
 	}
+	//xcb_flush(display);
+	//socket.close();
     }
     catch (std::exception& e)
     {
@@ -195,3 +243,5 @@ int main(int argc, char* argv[])
     
     return 0;
 }
+
+
