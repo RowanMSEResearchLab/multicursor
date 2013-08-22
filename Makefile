@@ -11,8 +11,8 @@ receiver: receiver.o
 
 receiver.o:  receiver.c
 
-wall: wall.o  xcbutil.o serverthread.o
-	$(CC) -g -o $@ wall.o xcbutil.o serverthread.o $(LDFLAGS)
+wall: wall.o  xcbutil.o serverthread.o vcursor.o
+	$(CC) -g -o $@ wall.o xcbutil.o serverthread.o vcursor.o $(LDFLAGS)
 
 wall.o:  wall.cpp xcbutil.h mouse.h serverthread.h
 
@@ -23,6 +23,7 @@ sender.o:  sender.cpp xcbutil.h mouse.h
 
 serverthread.o:  serverthread.cpp serverthread.h xcbutil.h mouse.h
 
+vcursor.o: vcursor.cpp vcursor.h xcbutil.h mouse.h
 
 clean: 
 	rm *.o; make 
