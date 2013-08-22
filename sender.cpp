@@ -27,6 +27,7 @@ using boost::asio::ip::tcp;
 using namespace std;
 
 float xscale=0, yscale=0;
+int mouseId;
 bool terminated = false;
 
 // Perform all necessary initializations
@@ -103,7 +104,7 @@ void sendMouseMove (tcp::socket & sock, int x, int y ) {
 void sendMouseDown (tcp::socket & sock, int x, int y, int detail) {
     
     event.type = MC_BUTTON_DOWN;
-    event.mouseId = 1;
+    event.mouseId = mouseId;
     event.buttonId = detail;
     event.x = x;
     event.y = y;
@@ -113,7 +114,7 @@ void sendMouseDown (tcp::socket & sock, int x, int y, int detail) {
 void sendMouseUp (tcp::socket & sock, int x, int y, int detail) {
     
     event.type = MC_BUTTON_UP;
-    event.mouseId = 1;
+    event.mouseId = mouseId;
     event.buttonId = detail;
     event.x = x;
     event.y = y;
@@ -121,14 +122,15 @@ void sendMouseUp (tcp::socket & sock, int x, int y, int detail) {
     
 }
 
-void getWindowDim( tcp::socket & socket, int * dim){
+void getWindowDim( tcp::socket & socket, pair<int,int> & dim, int & mouseID){
 	boost::system::error_code error;
 	vector<uint16_t> vec(2, 0);
 
 	std::size_t length = boost::asio::read(socket, boost::asio::buffer(vec), boost::asio::transfer_all(), error);
 
-	dim[0] = ntohs( vec[0] );
-	dim[1] = ntohs ( vec[1] );
+	
+	dim.first = ntohs( vec[0] );
+	dim.second = ntohs ( vec[1] );
 
 
 }
@@ -176,7 +178,7 @@ int main(int argc, char* argv[])
     	cout << "Connected to the world of tomorrow!" << endl;
 
 	int dim[2];
-	getWindowDim(socket, dim);
+	getWindowDim(socket, dim, mouseId);
 
 	cout << "dim: " << dim[0] << " " << dim[1] << endl;
 	

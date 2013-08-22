@@ -7,7 +7,9 @@ using namespace std;
 bool terminated;
 ServerThread::ServerThread ( tcp::socket & socket ) : rSocket ( socket ) {
 	terminated = false;
-    cursor = createCursor ( XC_pirate );
+    // cursor = createCursor ( XC_pirate );
+    cursor = Vcursor::getCursor ( );
+    // TODO: send cursor id and resolution to the client
 
 }
 
@@ -56,8 +58,12 @@ void ServerThread::getNextEvent ( tcp::socket & socket, MouseEvent & event ) {
 // Move mouse
 void ServerThread::mouseMove ( int x, int y ) {
     
+/*
     xcbMove ( x, y );
     moveWindow ( cursor, x, y );
+*/
+    cursor->move ( x, y );
+
 }
 
 // Click mouse

@@ -2,10 +2,11 @@
 #define MOUSE_H
 
 // Mouse event types
-#define MC_BUTTON_DOWN 1
-#define MC_BUTTON_UP 2
-#define MC_BUTTON_MOVE 3
-#define MC_TERMINATE 4
+#define MC_INIT 1
+#define MC_BUTTON_DOWN 2
+#define MC_BUTTON_UP 3
+#define MC_BUTTON_MOVE 4
+#define MC_TERMINATE 5
 
 
 typedef struct _MouseEvent {

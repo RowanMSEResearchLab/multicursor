@@ -31,7 +31,8 @@ private:
     void processEvent ( MouseEvent & event ) ;
     
     tcp::socket & rSocket;
-    int cursor;
+    // int cursor;
+    Vcursor * cursor;
 };
 
 #endif

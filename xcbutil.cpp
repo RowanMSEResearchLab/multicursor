@@ -168,3 +168,13 @@ pair<int,int> getResolution()
     specs[1] = geom->height;
     return pair<int,int>(geom->width,geom->height);
 }
+
+void xcbHideWindow( int windowId )
+{
+	xcb_unmap_window(display, windowId);
+}
+
+void xcbShowWindow( int windowId )
+{
+	xcb_map_window(display, windowId);
+}

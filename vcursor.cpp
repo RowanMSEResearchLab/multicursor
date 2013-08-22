@@ -37,7 +37,6 @@ Vcursor::Vcursor (int id ) {
 }
 
 Vcursor * Vcursor::getCursor() {
-
 	Vcursor * temp;
 	int i;
 	if (firstTime) {
@@ -51,6 +50,7 @@ Vcursor * Vcursor::getCursor() {
 
 	}
 
+	//TODO Semaphore acquire/release needed for sync
 	for (i = 0; i < NUMCURSORS; i++) 
 
 		if (!cursors[i]->isHidden ( ))
@@ -66,7 +66,7 @@ Vcursor * Vcursor::getCursor() {
 void Vcursor::show() {
 
 	// TODO: Make the window appear
-
+	showWindow(id);
 	hidden = false;
 
 
@@ -76,7 +76,7 @@ void Vcursor::show() {
 void Vcursor::hide() {
 
 	// TODO make the window disappear possibly by moving it to 0, 0
-
+	hideWindow(id);
 	hidden = true;
 
 
@@ -92,6 +92,7 @@ void Vcursor::move ( int x, int y ) {
 	xpos = x;
 	ypos = y;
 
-	// TODO move the window to the specified coordinates
+	// TODO Move the window to the specified coordinates
+	moveWindow(id, x, y);
 
 }
