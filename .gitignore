@@ -15,6 +15,9 @@
 *.exe
 *.out
 *.app
+wall
+sender
+
 
 # Temporary editor files
 *.c~
