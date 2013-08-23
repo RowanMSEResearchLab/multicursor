@@ -13,8 +13,8 @@ const int NUMCURSORS = 8;
 
 
 
-int Vcursor::getID () {
-	return id;
+int Vcursor::getMouseId ( ) {
+	return mouseId;
 }
 
 bool Vcursor::isHidden ( ) {
@@ -23,20 +23,21 @@ bool Vcursor::isHidden ( ) {
 }
 
 
-Vcursor::Vcursor (int id ) {
+Vcursor::Vcursor ( int mouseId ) {
 
 	hidden = true;
 	xpos = 0;
 	ypos = 0;
-	this->id = id;
+	this->mouseId = mouseId;
 	//  Call xcbutil function to create a window
 	// this will initialize the field windowID
+	//this->windowId = blablabla
 
 
 
 }
 
-Vcursor * Vcursor::getCursor() {
+Vcursor * Vcursor::getCursor( ) {
 	Vcursor * temp;
 	int i;
 	if (firstTime) {
@@ -63,27 +64,27 @@ Vcursor * Vcursor::getCursor() {
 }
 
 
-void Vcursor::show() {
+void Vcursor::show( ) {
 
 	// TODO: Make the window appear
-	xcbShowWindow(id);
+	xcbShowWindow( windowId );
 	hidden = false;
 
 
 }
 
 
-void Vcursor::hide() {
+void Vcursor::hide( ) {
 
 	// TODO make the window disappear possibly by moving it to 0, 0
-	xcbHideWindow(id);
+	xcbHideWindow( windowId );
 	hidden = true;
 
 
 }
 
 
-pair<int,int> Vcursor::getPosition() {
+pair<int,int> Vcursor::getPosition( ) {
 	return pair<int,int> ( xpos, ypos );
 }
 
@@ -93,6 +94,14 @@ void Vcursor::move ( int x, int y ) {
 	ypos = y;
 
 	// TODO Move the window to the specified coordinates
-	moveWindow(id, x, y);
+	moveWindow( windowId, x, y );
 
+}
+
+void Vcursor::up ( int buttonId ) {
+	xcbMouseUp ( xpos, ypos, buttonId );
+}
+
+void Vcursor::down ( int buttonId ) {
+	xcbMouseDown ( xpos, ypos, buttonId );
 }
