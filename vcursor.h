@@ -22,7 +22,7 @@ class Vcursor {
 		void down( int buttonId );	// Mouse down
 		pair<int,int> getPosition();
 		static Vcursor * getCursor();	
-		int getID ();
+		int getMouseId ();
 		void move ( int x, int y );
 		bool isHidden ( );
 
