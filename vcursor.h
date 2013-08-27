@@ -27,7 +27,6 @@ class Vcursor {
 		xcb_window_t getWindowId ();
 		void move ( int x, int y );
 		bool isHidden ( );
-
 };
 
 
