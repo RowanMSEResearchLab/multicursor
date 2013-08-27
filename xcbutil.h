@@ -36,7 +36,9 @@ void grabMouse ( ) ;
 
 void moveWindow ( int id, int x, int y );
 
-void xcbShowWindow ( int id );
+void xcbShowWindow ( uint32_t id );
+
+void xcbshow(xcb_window_t w);
 
 void xcbHideWindow ( int id );
 
@@ -45,6 +47,8 @@ void xcbHideWindow ( int id );
 	gets the resolution of the root window
 */
 pair<int,int> getResolution();
+
+uint32_t xcbCreateWindow (  int );
 
 extern xcb_connection_t * display; 
 extern int theRoot; // Root window

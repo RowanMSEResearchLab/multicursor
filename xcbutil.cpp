@@ -107,7 +107,6 @@ xcb_cursor_t createCursor ( uint16_t glyph)
     	0, 0, 0, 0xffff, 0xffff, 0xffff);  /* rgb, rgb */
     xcb_map_window ( display, cursor );
     
-    
     return cursor;
 }
 
@@ -117,7 +116,6 @@ void Fatal_Error ( const char * message ) {
 }
 
 void grabMouse ( ) {
-    
     
     xcb_cursor_t cursor;
     cursor = createCursor ( XC_pirate );
@@ -174,7 +172,41 @@ void xcbHideWindow( int windowId )
 	xcb_unmap_window(display, windowId);
 }
 
-void xcbShowWindow( int windowId )
+void xcbShowWindow( uint32_t windowId )
 {
 	xcb_map_window(display, windowId);
+}
+
+void xcbshow(xcb_window_t w)
+{
+	xcb_map_window(display, w);
+}
+
+xcb_window_t xcbCreateWindow ( int color ) {
+	const xcb_setup_t *setup = xcb_get_setup ( display );
+	xcb_screen_iterator_t iter = xcb_setup_roots_iterator ( setup );
+	xcb_screen_t *screen = iter.data;
+
+	uint32_t mask = XCB_GC_FOREGROUND | XCB_GC_GRAPHICS_EXPOSURES;
+	uint32_t values[2] = {color, 0};
+
+	// PROBLEM! CAUTION! ACHTUNG! ADVERTENCIA!
+	xcb_window_t window = xcb_generate_id ( display );
+	// PROBLEM! CAUTION! ACHTUNG! ADVERTENCIA!
+
+	mask = XCB_CW_BACK_PIXEL | XCB_CW_EVENT_MASK;
+
+	values[1] = XCB_EVENT_MASK_EXPOSURE;
+	
+	xcb_create_window (display,                    /* Connection          */
+                           XCB_COPY_FROM_PARENT,          /* depth (same as root)*/
+                           window,                        /* window Id           */
+                           screen->root,                  /* parent window       */
+                           0, 0,                          /* x, y                */
+                           64, 64,                      /* width, height       */
+                           10,                            /* border_width        */
+                           XCB_WINDOW_CLASS_INPUT_OUTPUT, /* class               */
+                           screen->root_visual,           /* visual              */
+                           mask, values );                     /* masks, not used yet */
+	return window;
 }

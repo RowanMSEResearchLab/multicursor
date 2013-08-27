@@ -2,15 +2,16 @@
 #define VCURSOR_H
 
 #include <utility>
+#include "xcbutil.h"
 
 using namespace std;
 
 
 class Vcursor {
 	private:
-		Vcursor(int);
+		Vcursor(int, int);
 		int mouseId; // The mouse id for this cursor
-		int windowId; // the xcb window id for the physical cursor window
+		uint32_t  windowId; // the xcb window id for the physical cursor window
 		int xpos, ypos;
 		bool hidden;
 
@@ -22,7 +23,8 @@ class Vcursor {
 		void down( int buttonId );	// Mouse down
 		pair<int,int> getPosition();
 		static Vcursor * getCursor();	
-		int getID ();
+		int getMouseId ();
+		xcb_window_t getWindowId ();
 		void move ( int x, int y );
 		bool isHidden ( );
 
