@@ -56,7 +56,6 @@ int main ( int argc, char * argv[] ) {
     	    // tcp::socket socket(io_service);
     	    tcp::socket * pSocket = new tcp::socket (io_service);
     	    acceptor.accept(*pSocket); 
-            sendWindowDim( *pSocket );
     	    
     	    cout << "Accepted remote mouse connection" << endl;
     	    
