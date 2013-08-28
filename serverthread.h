@@ -17,6 +17,8 @@ public:
     
 private:
     
+	void servThreadInit(tcp::socket & sock);
+
     void getNextEvent ( tcp::socket & socket, MouseEvent & event );
     
     // Move mouse

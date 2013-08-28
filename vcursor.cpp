@@ -23,7 +23,6 @@ xcb_window_t Vcursor::getWindowId ( ) {
 
 bool Vcursor::isHidden ( ) {
 	return hidden;
-
 }
 
 Vcursor::Vcursor ( int mouseId, int color ) {
@@ -65,7 +64,6 @@ Vcursor * Vcursor::getCursor( ) {
 /* NOTE: If show() or hide() don't seem to be working make sure you
 	are flushing the xcb connection before pausing!!!! */
 void Vcursor::show( ) {
-
 	xcbShowWindow( this->windowId ); 
 	printf("%d\n", windowId);
 	hidden = false;
@@ -89,7 +87,6 @@ void Vcursor::move ( int x, int y ) {
 
 	// TODO Move the window to the specified coordinates
 	moveWindow( windowId, x, y );
-
 }
 
 void Vcursor::up ( int buttonId ) {

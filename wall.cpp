@@ -43,11 +43,7 @@ int main ( int argc, char * argv[] ) {
     
     boost::thread_group serverThreads;
     
-    
-    
-    
     initialize ( ) ;
-    
     
     try {
     	boost::asio::io_service io_service;
@@ -56,7 +52,6 @@ int main ( int argc, char * argv[] ) {
     	tcp::acceptor acceptor(io_service, tcp::endpoint(tcp::v4(), MC_PORT));
     	
     	while ( 1 ) {
-    	    
     	    
     	    // tcp::socket socket(io_service);
     	    tcp::socket * pSocket = new tcp::socket (io_service);
@@ -75,9 +70,7 @@ int main ( int argc, char * argv[] ) {
     	cerr << exc.what() << endl;
     }
     
-    
     cleanup ( );
     return 0;
-    
-    
 }
+

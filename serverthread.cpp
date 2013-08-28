@@ -8,7 +8,8 @@ ServerThread::ServerThread ( tcp::socket & socket ) : rSocket ( socket ) {
     terminated = false;
     // cursor = createCursor ( XC_pirate );
     cursor = Vcursor::getCursor ( );
-    // TODO: send cursor id and resolution to the client
+    // TODO: send cursor id and resolution to the client (init the conn)
+	servThreadInit ( socket );
 
 }
 
@@ -18,6 +19,8 @@ void ServerThread::operator ( ) () {
     	getNextEvent ( rSocket, event ) ;
     	processEvent ( event );
     }
+	// Conn is closed; free the cursor
+	free ( cursor );
     ROAD_CLOSED
 }
 
@@ -51,35 +54,41 @@ void ServerThread::getNextEvent ( tcp::socket & socket, MouseEvent & event ) {
     << event.y << endl;
     
 }
+ 
+// Send the resolution of the window
+//TODO add to .h
+void ServerThread::servThreadInit(tcp::socket & sock){
+    pair<int,int> dim = getResolution();
+    
+    std::vector<uint16_t> vec(3, 0);
+    vec[0] = htons( dim.first ); 		// x of resolution
+    vec[1] = htons( dim.second ); 		// y of resolution
+	vec[2] = htons( cursor->getMouseId() );	// mouseId of the cursor
+    
+    int num = sock.send ( boost::asio::buffer(vec) );
+    cout << "Sent dimension ( "<< dim.first << " , " << dim.second << ") " << num << " bytes" << endl;
+    
+}
 
 // Move mouse
 void ServerThread::mouseMove ( int x, int y ) {
-    
-/*
-    xcbMove ( x, y );
-    moveWindow ( cursor, x, y );
-*/
     cursor->move ( x, y );
-
 }
 
 // Click mouse
 void ServerThread::mouseClick ( int x, int y, int buttonId ) {
-    // Mouse must be moved before clicking???
-    xcbMove ( x, y );
-    xcbClick ( buttonId );
-    
+    // Mouse must be moved before clicking
+    cursor->move ( x, y );
+    cursor->click ( buttonId );
 }
 
 
 void ServerThread::mouseUp ( int x, int y, int buttonId ) {
-    
-    xcbMouseUp ( x, y, buttonId );
+    cursor->up ( buttonId );
 }
 
 void ServerThread::mouseDown ( int x, int y, int buttonId ) {
-    
-    xcbMouseDown ( x, y, buttonId );
+    cursor->down ( buttonId );
 }
 
 // Processes one mouse event
@@ -106,8 +115,5 @@ void ServerThread::processEvent ( MouseEvent & event ) {
     }	
     
     xcb_flush( display );
-    
 }
-
-
 
