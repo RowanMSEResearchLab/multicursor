@@ -30,10 +30,5 @@ driver: driver.o xcbutil.o vcursor.o
 
 driver.o: driver.cpp xcbutil.h mouse.h vcursor.h
 
-test: test.o xcbutil.o vcursor.o
-	$(CC) -g -o $@ test.o xcbutil.o vcursor.o $(LDFLAGS)
-
-test.o: test.cpp xcbutil.h mouse.h vcursor.h
-
 clean: 
 	rm *.o; make 
