@@ -109,9 +109,9 @@ void ServerThread::processEvent ( MouseEvent & event ) {
     	mouseMove(event.x, event.y);
     	break;
     case MC_TERMINATE:
-	terminated = true;
-	rSocket.close();
-	break;
+		terminated = true;
+		rSocket.close();
+		break;
     }	
     
     xcb_flush( display );

@@ -54,7 +54,8 @@ Vcursor * Vcursor::getCursor( ) {
 
 		if (cursors[i]->isHidden ( )) {
 			// Unhide the cursor since it is now in use!!!!
-			cursors[i]->hidden = false;
+			cursors[i]->show ( );
+			
 			return cursors[i];
 		}
 	return NULL; // All cursor are occupied
