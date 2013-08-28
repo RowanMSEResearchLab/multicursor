@@ -93,7 +93,7 @@ void send ( tcp::socket & sock) {
 void sendMouseMove (tcp::socket & sock, int x, int y ) {
     
     event.type = MC_BUTTON_MOVE;
-    event.mouseId = 1;
+    event.mouseId = mouseId;
     event.buttonId = 1;
     event.x = x * xscale;
     event.y = y * yscale;
@@ -125,7 +125,7 @@ void sendMouseUp (tcp::socket & sock, int x, int y, int detail) {
 //TODO  void getWindowDim( tcp::socket & socket, pair<int,int> & dim, int & mouseID){
 void getWindowDim( tcp::socket & socket, int * dim ){
 	boost::system::error_code error;
-	vector<uint16_t> vec(2, 0);
+	vector<uint16_t> vec(3, 0);
 
 	std::size_t length = boost::asio::read(socket, boost::asio::buffer(vec), boost::asio::transfer_all(), error);
 
@@ -137,14 +137,13 @@ void getWindowDim( tcp::socket & socket, int * dim ){
 */
 	dim[0] = ntohs( vec[0] );
 	dim[1] = ntohs ( vec[1] );
-
-
+	mouseId = ntohs (vec[2]);
 }
 
 void terminate(tcp::socket & sock)
 {
 	event.type = MC_TERMINATE;
-	event.mouseId = 1;
+	event.mouseId = mouseId;
 	event.buttonId = 2;
 	event.x = 0;
 	event.y = 0;
