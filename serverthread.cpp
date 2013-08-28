@@ -78,7 +78,6 @@ void ServerThread::mouseMove ( int x, int y ) {
 // Click mouse
 void ServerThread::mouseClick ( int x, int y, int buttonId ) {
     // Mouse must be moved before clicking
-    cursor->move ( x, y );
     cursor->click ( buttonId );
 }
 
@@ -106,9 +105,10 @@ void ServerThread::processEvent ( MouseEvent & event ) {
     	break;
     	
     case MC_BUTTON_MOVE:
-    	mouseMove(event.x, event.y);
+    	mouseMove( event.x, event.y );
     	break;
     case MC_TERMINATE:
+		//TODO hide and release cursor
 		terminated = true;
 		rSocket.close();
 		break;

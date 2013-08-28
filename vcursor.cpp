@@ -91,13 +91,20 @@ void Vcursor::move ( int x, int y ) {
 }
 
 void Vcursor::up ( int buttonId ) {
-	xcbMouseUp ( xpos, ypos, buttonId );
+	xcbMouseUp ( buttonId );
 }
 
 void Vcursor::down ( int buttonId ) {
-	xcbMouseDown ( xpos, ypos, buttonId );
+	// On mouse down, move system cursor to location of window
+	// Subtract 1 from coords so cursor window doesnt eat the event
+	xcbMove( xpos-1, ypos-1 );
+	xcbMouseDown ( buttonId );
 }
 
+
+//VESTIGIAL FUNCTION - CAN PROBABLY BE DELETED
 void Vcursor::click ( int buttonId ) {
+	//MOVE SYSTEM CURSOR TO XPOS, YPOS
+	xcbMove ( xpos, ypos );
 	xcbClick ( buttonId );
 }

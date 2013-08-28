@@ -22,9 +22,9 @@ void xcbClick ( int buttonId );
 // xcb function that moves the cursor to the given location
 void xcbMove ( int x, int y );
 
-void xcbMouseUp ( int x, int y, int buttonId ) ;
+void xcbMouseUp ( int buttonId ) ;
 
-void xcbMouseDown ( int x, int y, int buttonId ) ;
+void xcbMouseDown ( int buttonId ) ;
 
 // Creates specified cursor
 xcb_cursor_t createCursor (uint16_t glyph);

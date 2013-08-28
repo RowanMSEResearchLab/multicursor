@@ -74,12 +74,12 @@ void xcbClick ( int buttonId ) {
     
 }
 
-void xcbMouseUp ( int x, int y, int buttonId ) {
+void xcbMouseUp ( int buttonId ) {
     xcb_test_fake_input( display, XCB_BUTTON_RELEASE, buttonId, 0, XCB_NONE, 0, 0, 0 );
     
 }
 
-void xcbMouseDown ( int x, int y, int buttonId ) {
+void xcbMouseDown ( int buttonId ) {
     xcb_test_fake_input( display, XCB_BUTTON_PRESS, buttonId, 0, XCB_NONE, 0, 0, 0 );
     
 }
@@ -87,7 +87,7 @@ void xcbMouseDown ( int x, int y, int buttonId ) {
 // xcb function that moves the cursor to the given location
 void xcbMove ( int x, int y ) {
     
-    xcb_test_fake_input ( display, XCB_MOTION_NOTIFY, 0, 0, theRoot, x, y , 0);
+    xcb_test_fake_input ( display, XCB_MOTION_NOTIFY, 0, 0, theRoot, x, y, 0);
     
 }
 
