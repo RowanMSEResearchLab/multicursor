@@ -98,3 +98,7 @@ void Vcursor::up ( int buttonId ) {
 void Vcursor::down ( int buttonId ) {
 	xcbMouseDown ( xpos, ypos, buttonId );
 }
+
+void Vcursor::click ( int buttonId ) {
+	xcbClick ( buttonId );
+}

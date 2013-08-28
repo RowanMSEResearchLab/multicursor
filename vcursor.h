@@ -26,6 +26,7 @@ class Vcursor {
 		int getMouseId ();
 		xcb_window_t getWindowId ();
 		void move ( int x, int y );
+		void click(int buttonId);
 		bool isHidden ( );
 };
 

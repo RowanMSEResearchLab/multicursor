@@ -5,7 +5,7 @@
 using namespace std;
 
 ServerThread::ServerThread ( tcp::socket & socket ) : rSocket ( socket ) {
-	terminated = false;
+    terminated = false;
     // cursor = createCursor ( XC_pirate );
     cursor = Vcursor::getCursor ( );
     // TODO: send cursor id and resolution to the client
@@ -18,7 +18,7 @@ void ServerThread::operator ( ) () {
     	getNextEvent ( rSocket, event ) ;
     	processEvent ( event );
     }
-	ROAD_CLOSED
+    ROAD_CLOSED
 }
 
 
