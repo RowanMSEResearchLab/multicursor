@@ -167,7 +167,7 @@ pair<int,int> getResolution()
     return pair<int,int>(geom->width,geom->height);
 }
 
-void xcbHideWindow( int windowId )
+void xcbHideWindow( uint32_t windowId )
 {
 	xcb_unmap_window(display, windowId);
 }

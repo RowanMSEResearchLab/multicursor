@@ -73,7 +73,8 @@ void Vcursor::show( ) {
 }
 
 void Vcursor::hide( ) {
-	xcbHideWindow( windowId );
+	xcbHideWindow( this->windowId );
+	printf("HIDING WINDOW: %d\n", windowId);
 	hidden = true;
 	xcb_flush( display );
 }

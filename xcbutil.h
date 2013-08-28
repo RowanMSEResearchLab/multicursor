@@ -40,7 +40,7 @@ void xcbShowWindow ( uint32_t id );
 
 void xcbshow(xcb_window_t w);
 
-void xcbHideWindow ( int id );
+void xcbHideWindow ( uint32_t id );
 
 
 /**
