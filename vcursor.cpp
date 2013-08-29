@@ -92,6 +92,12 @@ void Vcursor::move ( int x, int y ) {
 
 void Vcursor::up ( int buttonId ) {
 	xcbMouseUp ( buttonId );
+
+	int i;
+	for ( i = 0; i < cursors.size(); i++ ) {
+		if ( !cursors[i]->isHidden( ) ) 
+			xcbPullToTop ( cursors[i]->windowId );
+	}
 }
 
 void Vcursor::down ( int buttonId ) {
@@ -107,4 +113,5 @@ void Vcursor::click ( int buttonId ) {
 	//MOVE SYSTEM CURSOR TO XPOS, YPOS
 	xcbMove ( xpos, ypos );
 	xcbClick ( buttonId );
+	xcbPullToTop ( this->windowId );
 }

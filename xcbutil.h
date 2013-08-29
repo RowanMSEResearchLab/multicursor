@@ -38,9 +38,9 @@ void moveWindow ( int id, int x, int y );
 
 void xcbShowWindow ( uint32_t id );
 
-void xcbshow(xcb_window_t w);
+void xcbHideWindow ( uint32_t winId );
 
-void xcbHideWindow ( uint32_t id );
+void xcbPullToTop ( uint32_t winId );
 
 
 /**
@@ -52,5 +52,7 @@ uint32_t xcbCreateWindow (  int );
 
 extern xcb_connection_t * display; 
 extern int theRoot; // Root window
+
+const uint32_t toTopVals[] = { XCB_STACK_MODE_ABOVE };
 
 #endif

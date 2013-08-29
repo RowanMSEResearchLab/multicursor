@@ -20,7 +20,8 @@ void ServerThread::operator ( ) () {
     	processEvent ( event );
     }
 	// Conn is closed; free the cursor
-	free ( cursor );
+	//free ( cursor ); DO WE WANT TO LITERALLY FREE THE CURSOR?
+	cursor->hide();
     ROAD_CLOSED
 }
 

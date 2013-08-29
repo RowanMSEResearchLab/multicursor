@@ -86,9 +86,12 @@ void xcbMouseDown ( int buttonId ) {
 
 // xcb function that moves the cursor to the given location
 void xcbMove ( int x, int y ) {
-    
     xcb_test_fake_input ( display, XCB_MOTION_NOTIFY, 0, 0, theRoot, x, y, 0);
-    
+}
+
+// Pulls a window to the top of the screen (ensures visibility above other windows)
+void xcbPullToTop ( uint32_t winId ) {
+	xcb_configure_window ( display, winId, XCB_CONFIG_WINDOW_STACK_MODE, toTopVals );
 }
 
 xcb_cursor_t createCursor ( uint16_t glyph)
