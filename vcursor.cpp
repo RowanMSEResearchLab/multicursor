@@ -6,40 +6,50 @@
 
 using namespace std;
 
-static vector<Vcursor *> cursors;
-static bool firstTime = true;
-const int NUMCURSORS = 8;
+static vector<Vcursor *> cursors; // Vector of all cursors
+static bool firstTime = true;     // First time connecting
+const int NUMCURSORS = 8;         // Number of cursors to spawn
 
-//a list of different random colors to choose from
+// Different random colors to choose from
 static int colors [8] = { 16777215, 858083, 0, 33023, 2263842, 14772544, 14381203, 65535 };
 
+// Return the mouseId of the cursor
 int Vcursor::getMouseId ( ) {
 	return mouseId;
 }
 
+// Return the windowId of the cursor
 xcb_window_t Vcursor::getWindowId ( ) {
 	return windowId;
 }
 
+
+/* Return whether the cursor is hidden (inactive)
+    or visible (active) */
 bool Vcursor::isHidden ( ) {
 	return hidden;
 }
 
+/* Create a new virtual cursor with the given
+   mouseId and color. */
 Vcursor::Vcursor ( int mouseId, int color ) {
+  // Cursors start hidden and become visible when activated
 	hidden = true;
 	xpos = 0;
 	ypos = 0;
 	this->mouseId = mouseId;
-	//  Call xcbutil function to create a window
-	// this will initialize the field windowID
+	// Create the window corresponding to the vcursor
 	this->windowId = xcbCreateWindow ( color );
 }
 
+/* Returns an inactive cursor if one is available
+   or null if all cursors are already in use */
 Vcursor * Vcursor::getCursor( ) {
 	Vcursor * temp;
 	int i;
+  // If this is the first call, create the cursors
 	if (firstTime) {
-		// Create the cursor objects
+		// Create NUMCURSORS virtual cursors and place them in the vector
 		for (i = 0; i < NUMCURSORS; i++)  {
 			temp = new Vcursor ( i , colors[i % sizeof(colors)] ) ;
 			cursors.push_back ( temp );
@@ -50,49 +60,52 @@ Vcursor * Vcursor::getCursor( ) {
 	}
 
 	//TODO Semaphore acquire/release needed for sync
-	for (i = 0; i < NUMCURSORS; i++) 
 
+  // If not first time, return an inactive cursor or null
+	for (i = 0; i < NUMCURSORS; i++) 
 		if (cursors[i]->isHidden ( )) {
-			// Unhide the cursor since it is now in use!!!!
+			// Unhide the cursor since it is now in use
 			cursors[i]->show ( );
-			
 			return cursors[i];
 		}
-	return NULL; // All cursor are occupied
-
+  // All cursor are occupied
+	return NULL; 
 }
 
-/* NOTE: If show() or hide() don't seem to be working make sure you
-	are flushing the xcb connection before pausing!!!! */
+// Make the cursor window visible and set hidden appropriately
 void Vcursor::show( ) {
 	xcbShowWindow( this->windowId ); 
-	printf("%d\n", windowId);
 	hidden = false;
+  // Update the display
 	xcb_flush( display );
 }
 
+// Make the cursor window invisible and set hidden appropriately
 void Vcursor::hide( ) {
 	xcbHideWindow( this->windowId );
-	printf("HIDING WINDOW: %d\n", windowId);
 	hidden = true;
+  // Update the display
 	xcb_flush( display );
 }
 
+// Return the current position of the cursor
 pair<int,int> Vcursor::getPosition( ) {
 	return pair<int,int> ( xpos, ypos );
 }
 
+// Move the cursor to the specified location
 void Vcursor::move ( int x, int y ) {
 	xpos = x;
 	ypos = y;
-
-	// TODO Move the window to the specified coordinates
 	moveWindow( windowId, x, y );
 }
 
+// Mouse button is released 
 void Vcursor::up ( int buttonId ) {
 	xcbMouseUp ( buttonId );
 
+  /* When a mouse click is released all other active cursor
+     windows must be brought to the front of the screen */
 	int i;
 	for ( i = 0; i < cursors.size(); i++ ) {
 		if ( !cursors[i]->isHidden( ) ) 
@@ -100,18 +113,19 @@ void Vcursor::up ( int buttonId ) {
 	}
 }
 
+// Mouse button is pushed
 void Vcursor::down ( int buttonId ) {
-	// On mouse down, move system cursor to location of window
-	// Subtract 1 from coords so cursor window doesnt eat the event
+  /* Move system cursor to vcursor's current position -1 so
+     the vcursor window doesn't eat the event, then click */
 	xcbMove( xpos-1, ypos-1 );
 	xcbMouseDown ( buttonId );
 }
 
 
 //VESTIGIAL FUNCTION - CAN PROBABLY BE DELETED
-void Vcursor::click ( int buttonId ) {
+//void Vcursor::click ( int buttonId ) {
 	//MOVE SYSTEM CURSOR TO XPOS, YPOS
-	xcbMove ( xpos, ypos );
-	xcbClick ( buttonId );
-	xcbPullToTop ( this->windowId );
-}
+	//xcbMove ( xpos, ypos );
+	//xcbClick ( buttonId );
+	//xcbPullToTop ( this->windowId );
+//}

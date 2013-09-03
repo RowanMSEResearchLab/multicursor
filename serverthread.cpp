@@ -4,13 +4,12 @@
 
 using namespace std;
 
+// Create and initialize the thread
 ServerThread::ServerThread ( tcp::socket & socket ) : rSocket ( socket ) {
     terminated = false;
-    // cursor = createCursor ( XC_pirate );
+    // Get a cursor
     cursor = Vcursor::getCursor ( );
-    // TODO: send cursor id and resolution to the client (init the conn)
-	servThreadInit ( socket );
-
+	  servThreadInit ( socket );
 }
 
 void ServerThread::operator ( ) () {
@@ -56,19 +55,16 @@ void ServerThread::getNextEvent ( tcp::socket & socket, MouseEvent & event ) {
     
 }
  
-// Send the resolution of the window
-//TODO add to .h
+// Send the resolution of the display and mouseId of the cursor to the client
 void ServerThread::servThreadInit(tcp::socket & sock){
     pair<int,int> dim = getResolution();
     
     std::vector<uint16_t> vec(3, 0);
-    vec[0] = htons( dim.first ); 		// x of resolution
-    vec[1] = htons( dim.second ); 		// y of resolution
-	vec[2] = htons( cursor->getMouseId() );	// mouseId of the cursor
+    vec[0] = htons( dim.first ); 		        // x of resolution
+    vec[1] = htons( dim.second ); 		      // y of resolution
+  	vec[2] = htons( cursor->getMouseId() );	// mouseId of the cursor
     
     int num = sock.send ( boost::asio::buffer(vec) );
-    cout << "Sent dimension ( "<< dim.first << " , " << dim.second << ") " << num << " bytes" << endl;
-    
 }
 
 // Move mouse
