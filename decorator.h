@@ -10,7 +10,7 @@ using namespace std;
 class Decorator {
 	private:
 		Decorator ( );
-		std::map<uint32_t, int> owners;
+		std::map<uint32_t, int> owners;		// Map containing window=>owner
 
 	public:
 		static Decorator * createDecorator( );
