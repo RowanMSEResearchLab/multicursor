@@ -26,7 +26,6 @@ class Vcursor {
 		int getMouseId ();            // Get the cursor's mouseId
 		xcb_window_t getWindowId ();  // Get the cursor's windowId
 		void move ( int x, int y );   // Move cursor to specified location
-		//void click(int buttonId);
 		bool isHidden ( );            // Get whether cursor is hidden or visible
 };
 

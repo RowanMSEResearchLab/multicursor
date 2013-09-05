@@ -213,3 +213,15 @@ xcb_window_t xcbCreateWindow ( int color ) {
                            mask, values );                     /* masks, not used yet */
 	return window;
 }
+
+uint32_t xcbGetWinIdByCoord( uint32_t * windowId, int * x, int * y)
+{
+    xcb_query_pointer_cookie_t qpcookie;
+    xcb_query_pointer_reply_t * qpreply;
+    
+    qpcookie = xcb_query_pointer ( display, theRoot );
+    qpreply = xcb_query_pointer_reply ( display, qpcookie, NULL);
+    
+    return qpreply->child;
+}
+

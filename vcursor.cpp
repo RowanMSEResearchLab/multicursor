@@ -118,5 +118,6 @@ void Vcursor::down ( int buttonId ) {
   	/* Move system cursor to vcursor's current position -1 so
      	the vcursor window doesn't eat the event, then click */
 	xcbMove( xpos-1, ypos-1 );
+//	printf("%d", getWinIdByCoord(&windowId, &xpos-1, &ypos-1));
 	xcbMouseDown ( buttonId );
 }

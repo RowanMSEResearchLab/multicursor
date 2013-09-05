@@ -72,13 +72,6 @@ void ServerThread::mouseMove ( int x, int y ) {
     cursor->move ( x, y );
 }
 
-// Click mouse
-void ServerThread::mouseClick ( int x, int y, int buttonId ) {
-    // Mouse must be moved before clicking
-    cursor->click ( buttonId );
-}
-
-
 void ServerThread::mouseUp ( int x, int y, int buttonId ) {
     cursor->up ( buttonId );
 }
