@@ -1,4 +1,3 @@
-
 #include "vcursor.h"
 #include "xcbutil.h"
 #include <stdio.h>
@@ -33,7 +32,7 @@ bool Vcursor::isHidden ( ) {
 /* Create a new virtual cursor with the given
    mouseId and color. */
 Vcursor::Vcursor ( int mouseId, int color ) {
-  // Cursors start hidden and become visible when activated
+	 // Cursors start hidden and become visible when activated
 	hidden = true;
 	xpos = 0;
 	ypos = 0;
@@ -47,7 +46,7 @@ Vcursor::Vcursor ( int mouseId, int color ) {
 Vcursor * Vcursor::getCursor( ) {
 	Vcursor * temp;
 	int i;
-  // If this is the first call, create the cursors
+  	// If this is the first call, create the cursors
 	if (firstTime) {
 		// Create NUMCURSORS virtual cursors and place them in the vector
 		for (i = 0; i < NUMCURSORS; i++)  {
@@ -61,30 +60,31 @@ Vcursor * Vcursor::getCursor( ) {
 
 	//TODO Semaphore acquire/release needed for sync
 
-  // If not first time, return an inactive cursor or null
+  	// If not first time, return an inactive cursor or null
 	for (i = 0; i < NUMCURSORS; i++) 
 		if (cursors[i]->isHidden ( )) {
 			// Unhide the cursor since it is now in use
 			cursors[i]->show ( );
 			return cursors[i];
 		}
-  // All cursor are occupied
+  	// All cursor are occupied
 	return NULL; 
 }
 
 // Make the cursor window visible and set hidden appropriately
 void Vcursor::show( ) {
-	xcbShowWindow( this->windowId ); 
+	xcbShowWindow ( this->windowId ); 
 	hidden = false;
-  // Update the display
+  	// Update the display
 	xcb_flush( display );
 }
 
 // Make the cursor window invisible and set hidden appropriately
 void Vcursor::hide( ) {
-	xcbHideWindow( this->windowId );
+	xcbHideWindow ( this->windowId );
 	hidden = true;
-  // Update the display
+	//TODO MOVE WINDOW TO 0,0
+  	// Update the display
 	xcb_flush( display );
 }
 
@@ -104,8 +104,8 @@ void Vcursor::move ( int x, int y ) {
 void Vcursor::up ( int buttonId ) {
 	xcbMouseUp ( buttonId );
 
-  /* When a mouse click is released all other active cursor
-     windows must be brought to the front of the screen */
+  	/* When a mouse click is released all other active cursor
+     	windows must be brought to the front of the screen */
 	int i;
 	for ( i = 0; i < cursors.size(); i++ ) {
 		if ( !cursors[i]->isHidden( ) ) 
@@ -115,17 +115,8 @@ void Vcursor::up ( int buttonId ) {
 
 // Mouse button is pushed
 void Vcursor::down ( int buttonId ) {
-  /* Move system cursor to vcursor's current position -1 so
-     the vcursor window doesn't eat the event, then click */
+  	/* Move system cursor to vcursor's current position -1 so
+     	the vcursor window doesn't eat the event, then click */
 	xcbMove( xpos-1, ypos-1 );
 	xcbMouseDown ( buttonId );
 }
-
-
-//VESTIGIAL FUNCTION - CAN PROBABLY BE DELETED
-//void Vcursor::click ( int buttonId ) {
-	//MOVE SYSTEM CURSOR TO XPOS, YPOS
-	//xcbMove ( xpos, ypos );
-	//xcbClick ( buttonId );
-	//xcbPullToTop ( this->windowId );
-//}
