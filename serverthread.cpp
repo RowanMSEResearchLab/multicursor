@@ -4,12 +4,18 @@
 
 using namespace std;
 
+boost::interprocess::interprocess_semaphore ServerThread::mutex (1);
+
+
 // Create and initialize the thread
 ServerThread::ServerThread ( tcp::socket & socket ) : rSocket ( socket ) {
     terminated = false;
-    // Get a cursor
+    // Get a cursor. 
+    mutex.wait ( ); 
     cursor = Vcursor::getCursor ( );
-	  servThreadInit ( socket );
+    mutex.post ( );
+    
+    servThreadInit ( socket );
 }
 
 void ServerThread::operator ( ) () {
@@ -18,9 +24,9 @@ void ServerThread::operator ( ) () {
     	getNextEvent ( rSocket, event ) ;
     	processEvent ( event );
     }
-	// Conn is closed; free the cursor
-	//free ( cursor ); DO WE WANT TO LITERALLY FREE THE CURSOR?
-	cursor->hide();
+    // Conn is closed; free the cursor
+    //free ( cursor ); DO WE WANT TO LITERALLY FREE THE CURSOR?
+    cursor->hide();
     ROAD_CLOSED
 }
 
@@ -54,7 +60,7 @@ void ServerThread::getNextEvent ( tcp::socket & socket, MouseEvent & event ) {
     << event.y << endl;
     
 }
- 
+
 // Send the resolution of the display and mouseId of the cursor to the client
 void ServerThread::servThreadInit(tcp::socket & sock){
     pair<int,int> dim = getResolution();
@@ -62,7 +68,7 @@ void ServerThread::servThreadInit(tcp::socket & sock){
     std::vector<uint16_t> vec(3, 0);
     vec[0] = htons( dim.first ); 		        // x of resolution
     vec[1] = htons( dim.second ); 		      // y of resolution
-  	vec[2] = htons( cursor->getMouseId() );	// mouseId of the cursor
+    vec[2] = htons( cursor->getMouseId() );	// mouseId of the cursor
     
     int num = sock.send ( boost::asio::buffer(vec) );
 }
@@ -98,10 +104,10 @@ void ServerThread::processEvent ( MouseEvent & event ) {
     	mouseMove( event.x, event.y );
     	break;
     case MC_TERMINATE:
-		//TODO hide and release cursor
-		terminated = true;
-		rSocket.close();
-		break;
+    	//TODO hide and release cursor
+    	terminated = true;
+    	rSocket.close();
+    	break;
     }	
     
     xcb_flush( display );

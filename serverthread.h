@@ -4,7 +4,9 @@
 #include <boost/asio.hpp>
 #include "mouse.h"
 #include "vcursor.h"
+#include <boost/interprocess/sync/interprocess_semaphore.hpp>
 
+using namespace boost::interprocess;
 using boost::asio::ip::tcp;
 
 class ServerThread {
@@ -38,6 +40,9 @@ private:
     // int cursor;
     Vcursor * cursor;
     bool terminated;
+    
+    static boost::interprocess::interprocess_semaphore mutex;
+
 };
 
 #endif
