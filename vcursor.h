@@ -3,9 +3,9 @@
 
 #include <utility>
 #include "xcbutil.h"
+#include <vector>
 
 using namespace std;
-
 
 class Vcursor {
 	private:
@@ -14,7 +14,6 @@ class Vcursor {
 		uint32_t  windowId; // The xcb windowId for the cursor window
 		int xpos, ypos;     // The x and y position of the cursor
 		bool hidden;        // Whether the cursor window is hidden or visible
-
 
 	public:
 		void show();                  // Show the cursor window
@@ -27,6 +26,7 @@ class Vcursor {
 		xcb_window_t getWindowId ();  // Get the cursor's windowId
 		void move ( int x, int y );   // Move cursor to specified location
 		bool isHidden ( );            // Get whether cursor is hidden or visible
+		void getAllCursIds ( vector<uint32_t> &); // Get all cursor id's
 };
 
 #endif

@@ -121,3 +121,13 @@ void Vcursor::down ( int buttonId ) {
 //	printf("%d", getWinIdByCoord(&windowId, &xpos-1, &ypos-1));
 	xcbMouseDown ( buttonId );
 }
+
+void getAllCursIds (std::vector<uint32_t> & retVal ) {
+	std::vector<uint32_t> allIds;
+	int i;
+	for ( i = 0; i < cursors.size(); i++ ) {
+		allIds.push_back ( cursors[i]->getWindowId() );
+	}
+	//return allIds;
+	retVal.swap(allIds);
+}

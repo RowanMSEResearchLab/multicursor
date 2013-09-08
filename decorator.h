@@ -8,12 +8,8 @@ using namespace std;
 
 
 class Decorator {
-	private:
-		Decorator ( );
-		std::map<uint32_t, int> owners;		// Map containing window=>owner
-
 	public:
-		static Decorator * createDecorator( );
+		Decorator ( );
 		bool isOwner ( uint32_t winId, int mouseId );
 };
 
