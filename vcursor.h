@@ -26,7 +26,6 @@ class Vcursor {
 		xcb_window_t getWindowId ();  // Get the cursor's windowId
 		void move ( int x, int y );   // Move cursor to specified location
 		bool isHidden ( );            // Get whether cursor is hidden or visible
-		void getAllCursIds ( vector<uint32_t> &); // Get all cursor id's
 };
 
 #endif

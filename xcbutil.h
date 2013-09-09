@@ -16,6 +16,8 @@ void xcbInit ( ) ;
 
 void xcbDestroy  ( ) ;
 
+int getRoot ( );
+
 // xcb function that clicks button at the current location
 void xcbClick ( int buttonId );
 
