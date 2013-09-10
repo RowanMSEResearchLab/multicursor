@@ -1,5 +1,6 @@
 #include "serverthread.h"
 #include "xcbutil.h"
+#include "enforcer.h"
 #include "mouse.h"
 
 using namespace std;
@@ -9,7 +10,9 @@ ServerThread::ServerThread ( tcp::socket & socket ) : rSocket ( socket ) {
     terminated = false;
     // Get a cursor
     cursor = Vcursor::getCursor ( );
-	  servThreadInit ( socket );
+	enforcer = Enforcer::getEnforcer ( );
+	enforcer->addForbidden( cursor->getMouseId ( ) );
+	servThreadInit ( socket );
 }
 
 void ServerThread::operator ( ) () {
@@ -19,7 +22,6 @@ void ServerThread::operator ( ) () {
     	processEvent ( event );
     }
 	// Conn is closed; free the cursor
-	//free ( cursor ); DO WE WANT TO LITERALLY FREE THE CURSOR?
 	cursor->hide();
     ROAD_CLOSED
 }
@@ -82,27 +84,32 @@ void ServerThread::mouseDown ( int x, int y, int buttonId ) {
 
 // Processes one mouse event
 void ServerThread::processEvent ( MouseEvent & event ) {
-    
-    switch ( event.type ) {
+    if ( enforcer->isOwner ( xcbGetWinIdByCoord( theRoot, event.x, event.y ), event.mouseId ) ) { 
+    	switch ( event.type ) {
     	
-    case MC_BUTTON_UP:
-    	// cout << "Clicking mouse at " << event.x << " " << event.y << endl;
-    	mouseUp ( event.x, event.y, 1 );
-    	break;
+    	case MC_BUTTON_UP:
+    		// cout << "Clicking mouse at " << event.x << " " << event.y << endl;
+    		mouseUp ( event.x, event.y, 1 );
+    		break;
     	
-    case MC_BUTTON_DOWN:
-    	mouseDown ( event.x, event.y, 1 );
-    	break;
+    	case MC_BUTTON_DOWN:
+    		mouseDown ( event.x, event.y, 1 );
+    		break;
     	
-    case MC_BUTTON_MOVE:
-    	mouseMove( event.x, event.y );
-    	break;
-    case MC_TERMINATE:
+    	case MC_BUTTON_MOVE:
+    		mouseMove( event.x, event.y );
+    		break;
+		}
+    //case MC_TERMINATE:
 		//TODO hide and release cursor
+	//	terminated = true;
+	//	rSocket.close();
+	//	break;
+     } else if ( event.type == MC_TERMINATE ) {
+		enforcer->clean ( event.mouseId );
 		terminated = true;
 		rSocket.close();
-		break;
-    }	
+	}
     
     xcb_flush( display );
 }

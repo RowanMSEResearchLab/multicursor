@@ -4,6 +4,7 @@
 #include <boost/asio.hpp>
 #include "mouse.h"
 #include "vcursor.h"
+#include "enforcer.h"
 
 using boost::asio::ip::tcp;
 
@@ -37,6 +38,9 @@ private:
     tcp::socket & rSocket;
     // int cursor;
     Vcursor * cursor;
+	
+	Enforcer * enforcer;
+
     bool terminated;
 };
 

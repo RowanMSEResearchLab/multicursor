@@ -9,14 +9,9 @@
 using boost::asio::ip::tcp;
 using namespace std;
 
-
-
 // Perform all necessary initializations
 void initialize ( ) {
     xcbInit ( );
-    
-    // serverInit () ;
-    
 }
 
 // cleanup at the end of the program
@@ -24,8 +19,6 @@ void cleanup ( ) {
     xcbDestroy ( );
     // serverShutdown ( );
 }
-
-
 
 void sendWindowDim(tcp::socket & sock){
     pair<int,int> dim = getResolution();

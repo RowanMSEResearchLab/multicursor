@@ -83,6 +83,7 @@ void Vcursor::show( ) {
 void Vcursor::hide( ) {
 	xcbHideWindow ( this->windowId );
 	hidden = true;
+	move ( 0,0 );
 	//TODO MOVE WINDOW TO 0,0
   	// Update the display
 	xcb_flush( display );
