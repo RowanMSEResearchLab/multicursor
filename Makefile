@@ -4,17 +4,17 @@ CPPFLAGS = -g -fpermissive `pkg-config --cflags $(PKGS)`
 EXTRALIBS= -lboost_system -lboost_thread -lpthread 
 LDFLAGS = `pkg-config --libs $(PKGS)` $(EXTRALIBS)
 
-all: wall sender driver test enforcer
+all: wall sender driver 
 
 receiver: receiver.o 
 	$(CC) -g -o $@ receiver.o $(LDFLAGS)
 
 receiver.o:  receiver.c
 
-wall: wall.o  xcbutil.o serverthread.o vcursor.o
-	$(CC) -g -o $@ wall.o xcbutil.o serverthread.o vcursor.o $(LDFLAGS)
+wall: wall.o  xcbutil.o serverthread.o vcursor.o enforcer.o
+	$(CC) -g -o $@ wall.o xcbutil.o serverthread.o vcursor.o enforcer.o $(LDFLAGS)
 
-wall.o:  wall.cpp xcbutil.h mouse.h serverthread.h
+wall.o:  wall.cpp xcbutil.h mouse.h serverthread.h enforcer.h
 
 sender: sender.o xcbutil.o
 	$(CC) -g -o $@ sender.o xcbutil.o $(LDFLAGS)
