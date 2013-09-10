@@ -214,7 +214,7 @@ xcb_window_t xcbCreateWindow ( int color ) {
 	return window;
 }
 
-uint32_t xcbGetWinIdByCoord( uint32_t * windowId, int * x, int * y)
+uint32_t xcbGetWinIdByCoord( uint32_t windowId, int x, int y)
 {
     xcb_query_pointer_cookie_t qpcookie;
     xcb_query_pointer_reply_t * qpreply;

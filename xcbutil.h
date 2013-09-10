@@ -50,9 +50,9 @@ void xcbPullToTop ( uint32_t winId );
 */
 pair<int,int> getResolution();
 
-uint32_t xcbCreateWindow (  int );
+uint32_t xcbCreateWindow ( int );
 
-uint32_t xcbGetWinIdByCoord( int * windowId, int * x, int * y);
+uint32_t xcbGetWinIdByCoord( uint32_t windowId, int x, int y);
 
 extern xcb_connection_t * display; 
 extern int theRoot; // Root window

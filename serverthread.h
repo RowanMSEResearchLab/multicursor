@@ -12,7 +12,7 @@ class ServerThread {
     
 public:
     
-    ServerThread ( tcp::socket & socket );
+    ServerThread ( tcp::socket & socket , Enforcer * enforcer );
     
     void operator ( ) ();
     

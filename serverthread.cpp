@@ -6,7 +6,7 @@
 using namespace std;
 
 // Create and initialize the thread
-ServerThread::ServerThread ( tcp::socket & socket ) : rSocket ( socket ) {
+ServerThread::ServerThread ( tcp::socket & socket, Enforcer * enforcer ) : rSocket ( socket ) {
     terminated = false;
     // Get a cursor
     cursor = Vcursor::getCursor ( );
@@ -84,7 +84,13 @@ void ServerThread::mouseDown ( int x, int y, int buttonId ) {
 
 // Processes one mouse event
 void ServerThread::processEvent ( MouseEvent & event ) {
-    if ( enforcer->isOwner ( xcbGetWinIdByCoord( theRoot, event.x, event.y ), event.mouseId ) ) { 
+	if ( event.type == MC_BUTTON_MOVE ) {
+		mouseMove( event.x, event.y );
+    } else if ( event.type == MC_TERMINATE ) {
+		enforcer->clean ( event.mouseId );
+		terminated = true;
+		rSocket.close();
+	} else if ( enforcer->isOwner ( xcbGetWinIdByCoord( (uint32_t)theRoot, (int)event.x, (int)event.y ), event.mouseId ) ) { 
     	switch ( event.type ) {
     	
     	case MC_BUTTON_UP:
@@ -100,17 +106,7 @@ void ServerThread::processEvent ( MouseEvent & event ) {
     		mouseMove( event.x, event.y );
     		break;
 		}
-    //case MC_TERMINATE:
-		//TODO hide and release cursor
-	//	terminated = true;
-	//	rSocket.close();
-	//	break;
-     } else if ( event.type == MC_TERMINATE ) {
-		enforcer->clean ( event.mouseId );
-		terminated = true;
-		rSocket.close();
 	}
-    
     xcb_flush( display );
 }
 

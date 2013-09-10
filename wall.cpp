@@ -5,13 +5,17 @@
 #include "serverthread.h"
 #include "xcbutil.h"
 #include "mouse.h"
+#include "enforcer.h"
 
 using boost::asio::ip::tcp;
 using namespace std;
 
+Enforcer * enforcer;
+
 // Perform all necessary initializations
 void initialize ( ) {
     xcbInit ( );
+	enforcer = Enforcer::getEnforcer ( );
 }
 
 // cleanup at the end of the program
@@ -52,7 +56,7 @@ int main ( int argc, char * argv[] ) {
     	    
     	    cout << "Accepted remote mouse connection" << endl;
     	    
-    	    serverThreads.create_thread (ServerThread(*pSocket));
+    	    serverThreads.create_thread (ServerThread(*pSocket, enforcer));
     	}
     	
     	serverThreads.join_all ( );

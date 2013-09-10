@@ -21,7 +21,7 @@ sender: sender.o xcbutil.o
 
 sender.o:  sender.cpp xcbutil.h mouse.h
 
-serverthread.o:  serverthread.cpp serverthread.h xcbutil.h mouse.h
+serverthread.o:  serverthread.cpp serverthread.h xcbutil.h mouse.h enforcer.h
 
 vcursor.o: vcursor.cpp vcursor.h xcbutil.h mouse.h
 
@@ -31,6 +31,8 @@ driver: driver.o xcbutil.o vcursor.o
 driver.o: driver.cpp xcbutil.h mouse.h vcursor.h
 
 enforcer.o: enforcer.cpp enforcer.h xcbutil.h
+
+xcbutil.o : xcbutil.h xcbutil.cpp
 
 clean: 
 	rm *.o; make 
