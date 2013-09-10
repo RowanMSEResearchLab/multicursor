@@ -198,7 +198,7 @@ int main(int argc, char* argv[])
 	// Event loop
 	// Wait for button event. Print mouse position on button release and print ouch on button pres
 	
-	while( !terminated && socket.is_open() && (event = xcb_wait_for_event (display))) {
+	while( !terminated && socket.is_open() && (event = xcb_wait_for_event (xcbGetDisplay()))) {
 	    switch (event->response_type & ~0x80) {
 	    	
 	    case XCB_BUTTON_PRESS:

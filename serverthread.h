@@ -5,14 +5,16 @@
 #include "mouse.h"
 #include "vcursor.h"
 #include "enforcer.h"
+#include <boost/interprocess/sync/interprocess_semaphore.hpp>
 
+using namespace boost::interprocess;
 using boost::asio::ip::tcp;
 
 class ServerThread {
     
 public:
     
-    ServerThread ( tcp::socket & socket , Enforcer * enforcer );
+    ServerThread ( tcp::socket & socket );
     
     void operator ( ) ();
     
@@ -42,6 +44,8 @@ private:
 	Enforcer * enforcer;
 
     bool terminated;
+
+	static boost::interprocess::interprocess_semaphore mutex;
 };
 
 #endif

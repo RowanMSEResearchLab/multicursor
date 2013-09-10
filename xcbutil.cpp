@@ -1,4 +1,4 @@
-#include <stdio.h>
+#include <stdio.h>	//xcb methods should flush display
 
 
 #include <unistd.h>
@@ -76,22 +76,23 @@ void xcbClick ( int buttonId ) {
 
 void xcbMouseUp ( int buttonId ) {
     xcb_test_fake_input( display, XCB_BUTTON_RELEASE, buttonId, 0, XCB_NONE, 0, 0, 0 );
-    
+   	xcb_flush ( display ); 
 }
 
 void xcbMouseDown ( int buttonId ) {
     xcb_test_fake_input( display, XCB_BUTTON_PRESS, buttonId, 0, XCB_NONE, 0, 0, 0 );
-    
+   	xcb_flush ( display ); 
 }
 
 // xcb function that moves the cursor to the given location
 void xcbMove ( int x, int y ) {
     xcb_test_fake_input ( display, XCB_MOTION_NOTIFY, 0, 0, theRoot, x, y, 0);
+	xcb_flush ( display );
 }
-
 // Pulls a window to the top of the screen (ensures visibility above other windows)
 void xcbPullToTop ( uint32_t winId ) {
 	xcb_configure_window ( display, winId, XCB_CONFIG_WINDOW_STACK_MODE, toTopVals );
+	xcb_flush ( display );
 }
 
 xcb_cursor_t createCursor ( uint16_t glyph)
@@ -150,9 +151,7 @@ void moveWindow ( int id, int x, int y ) {
     values[0] = x;
     values[1] = y;
     
-    
     xcb_configure_window (display, id, XCB_CONFIG_WINDOW_X | XCB_CONFIG_WINDOW_Y, values);
-    
     xcb_flush ( display );
 }
 
@@ -173,16 +172,13 @@ pair<int,int> getResolution()
 void xcbHideWindow( uint32_t windowId )
 {
 	xcb_unmap_window(display, windowId);
+	xcb_flush ( display );	
 }
 
 void xcbShowWindow( uint32_t windowId )
 {
 	xcb_map_window(display, windowId);
-}
-
-void xcbshow(xcb_window_t w)
-{
-	xcb_map_window(display, w);
+	xcb_flush ( display );
 }
 
 xcb_window_t xcbCreateWindow ( int color ) {
@@ -214,14 +210,19 @@ xcb_window_t xcbCreateWindow ( int color ) {
 	return window;
 }
 
-uint32_t xcbGetWinIdByCoord( uint32_t windowId, int x, int y)
+//Must call move() on system cursor before getting coords
+uint32_t xcbGetWinIdByCoord( int x, int y )
 {
     xcb_query_pointer_cookie_t qpcookie;
     xcb_query_pointer_reply_t * qpreply;
-    
+	
+	xcbMove ( x, y );    
     qpcookie = xcb_query_pointer ( display, theRoot );
     qpreply = xcb_query_pointer_reply ( display, qpcookie, NULL);
-    
+	printf("%u", qpreply->child);    
     return qpreply->child;
 }
 
+xcb_connection_t * xcbGetDisplay ( ) {
+	return display;
+}

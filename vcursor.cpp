@@ -58,8 +58,6 @@ Vcursor * Vcursor::getCursor( ) {
 
 	}
 
-	//TODO Semaphore acquire/release needed for sync
-
   	// If not first time, return an inactive cursor or null
 	for (i = 0; i < NUMCURSORS; i++) 
 		if (cursors[i]->isHidden ( )) {
@@ -76,7 +74,6 @@ void Vcursor::show( ) {
 	xcbShowWindow ( this->windowId ); 
 	hidden = false;
   	// Update the display
-	xcb_flush( display );
 }
 
 // Make the cursor window invisible and set hidden appropriately
@@ -84,9 +81,7 @@ void Vcursor::hide( ) {
 	xcbHideWindow ( this->windowId );
 	hidden = true;
 	move ( 0,0 );
-	//TODO MOVE WINDOW TO 0,0
   	// Update the display
-	xcb_flush( display );
 }
 
 // Return the current position of the cursor

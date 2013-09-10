@@ -52,10 +52,12 @@ pair<int,int> getResolution();
 
 uint32_t xcbCreateWindow ( int );
 
-uint32_t xcbGetWinIdByCoord( uint32_t windowId, int x, int y);
+uint32_t xcbGetWinIdByCoord( int x, int y);
 
-extern xcb_connection_t * display; 
-extern int theRoot; // Root window
+xcb_connection_t * xcbGetDisplay ( );
+
+//extern xcb_connection_t * display; 	//xcb methods should flush display
+//extern int theRoot; // Root window
 
 const uint32_t toTopVals[] = { XCB_STACK_MODE_ABOVE };
 

@@ -10,12 +10,9 @@
 using boost::asio::ip::tcp;
 using namespace std;
 
-Enforcer * enforcer;
-
 // Perform all necessary initializations
 void initialize ( ) {
     xcbInit ( );
-	enforcer = Enforcer::getEnforcer ( );
 }
 
 // cleanup at the end of the program
@@ -56,7 +53,7 @@ int main ( int argc, char * argv[] ) {
     	    
     	    cout << "Accepted remote mouse connection" << endl;
     	    
-    	    serverThreads.create_thread (ServerThread(*pSocket, enforcer));
+    	    serverThreads.create_thread (ServerThread(*pSocket));
     	}
     	
     	serverThreads.join_all ( );

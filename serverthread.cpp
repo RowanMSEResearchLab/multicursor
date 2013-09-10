@@ -5,11 +5,15 @@
 
 using namespace std;
 
+boost::interprocess::interprocess_semaphore ServerThread::mutex ( 1 );
+
 // Create and initialize the thread
-ServerThread::ServerThread ( tcp::socket & socket, Enforcer * enforcer ) : rSocket ( socket ) {
+ServerThread::ServerThread ( tcp::socket & socket ) : rSocket ( socket ) {
     terminated = false;
     // Get a cursor
+	mutex.wait( );
     cursor = Vcursor::getCursor ( );
+	mutex.post( );
 	enforcer = Enforcer::getEnforcer ( );
 	enforcer->addForbidden( cursor->getMouseId ( ) );
 	servThreadInit ( socket );
@@ -90,7 +94,7 @@ void ServerThread::processEvent ( MouseEvent & event ) {
 		enforcer->clean ( event.mouseId );
 		terminated = true;
 		rSocket.close();
-	} else if ( enforcer->isOwner ( xcbGetWinIdByCoord( (uint32_t)theRoot, (int)event.x, (int)event.y ), event.mouseId ) ) { 
+	} else if ( enforcer->isOwner ( xcbGetWinIdByCoord( event.x, event.y ), event.mouseId ) ) { 
     	switch ( event.type ) {
     	
     	case MC_BUTTON_UP:
@@ -107,6 +111,5 @@ void ServerThread::processEvent ( MouseEvent & event ) {
     		break;
 		}
 	}
-    xcb_flush( display );
 }
 
