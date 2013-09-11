@@ -216,7 +216,7 @@ uint32_t xcbGetWinIdByCoord( int x, int y )
     xcb_query_pointer_cookie_t qpcookie;
     xcb_query_pointer_reply_t * qpreply;
 	
-	xcbMove ( x, y );    
+	xcbMove ( x-1, y-1 );    
     qpcookie = xcb_query_pointer ( display, theRoot );
     qpreply = xcb_query_pointer_reply ( display, qpcookie, NULL);
 	printf("%u", qpreply->child);    
