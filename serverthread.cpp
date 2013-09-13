@@ -44,7 +44,7 @@ void ServerThread::getNextEvent ( tcp::socket & socket, MouseEvent & event ) {
     	boost::asio::transfer_all(), 
     	error);
     
-    cout << "Read : " << length << " bytes" << endl;
+    // cout << "Read : " << length << " bytes" << endl;
     // Convert from network byte order
     event.type = ntohs( vec[0] );
     event.mouseId = ntohs ( vec[1] );
@@ -52,12 +52,14 @@ void ServerThread::getNextEvent ( tcp::socket & socket, MouseEvent & event ) {
     event.x = ntohs ( vec[3] );
     event.y = ntohs ( vec[4] );
     
+#if 0
     cout << "Received: " 
     << event.type << " " 
     << event.mouseId << " " 
     << event.buttonId << " "
     << event.x << " "
     << event.y << endl;
+#endif
     
 }
  
@@ -95,6 +97,7 @@ void ServerThread::processEvent ( MouseEvent & event ) {
 		terminated = true;
 		rSocket.close();
 	} else if ( enforcer->isOwner ( xcbGetWinIdByCoord( event.x, event.y ), event.mouseId ) ) { 
+		enforcer->print ( );
     	switch ( event.type ) {
     	
     	case MC_BUTTON_UP:
@@ -111,5 +114,10 @@ void ServerThread::processEvent ( MouseEvent & event ) {
     		break;
 		}
 	}
+	else {
+		enforcer->print ( );
+	}
+
+
 }
 
