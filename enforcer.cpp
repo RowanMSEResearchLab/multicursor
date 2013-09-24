@@ -63,6 +63,7 @@ void Enforcer::clean ( int mouseId ) {
 		// If the owner is mouseId, remove the element
 		// This frees the ownership on that window
 		if ( itr->second == mouseId )
+			printf("deleting %i entry", mouseId);
 			owners.erase ( itr++ );
 	}
 }
