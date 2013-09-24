@@ -34,6 +34,7 @@ bool Vcursor::isHidden ( ) {
 Vcursor::Vcursor ( int mouseId, int color ) {
 	 // Cursors start hidden and become visible when activated
 	hidden = true;
+	isMouseDown = false;
 	xpos = 0;
 	ypos = 0;
 	this->mouseId = mouseId;
@@ -94,12 +95,16 @@ void Vcursor::move ( int x, int y ) {
 	xpos = x;
 	ypos = y;
 	moveWindow( windowId, x, y );
+	if(isMouseDown)
+	{
+		moveWindow(xcbGetWinIdByCoord(x,y), x, y);
+	}
 }
 
 // Mouse button is released 
 void Vcursor::up ( int buttonId ) {
 	xcbMouseUp ( buttonId );
-
+	isMouseDown = false;
   	/* When a mouse click is released all other active cursor
      	windows must be brought to the front of the screen */
 	int i;
@@ -116,5 +121,6 @@ void Vcursor::down ( int buttonId ) {
 	xcbMove( xpos-1, ypos-1 );
 //	printf("%d", getWinIdByCoord(&windowId, &xpos-1, &ypos-1));
 	xcbMouseDown ( buttonId );
+	isMouseDown = true;
 }
 
