@@ -97,7 +97,10 @@ void Vcursor::move ( int x, int y ) {
 	moveWindow( windowId, x, y );
 	if(isMouseDown)
 	{
-		moveWindow(xcbGetWinIdByCoord(x-1,y-1), x, y);
+		uint32_t underlyingWin = xcbGetWinIdByCoord(x-1,y-1);
+		xcb_unmap_window(display,underlyingWin);
+		moveWindow(underlyingWin, x, y);
+		xcb_map_window(display, underlyingWin);
 	}
 }
 
