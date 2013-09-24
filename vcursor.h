@@ -14,6 +14,7 @@ class Vcursor {
 		uint32_t  windowId; // The xcb windowId for the cursor window
 		int xpos, ypos;     // The x and y position of the cursor
 		bool hidden;        // Whether the cursor window is hidden or visible
+		bool isMouseDown;   // Used for window dragging 
 
 	public:
 		void show();                  // Show the cursor window

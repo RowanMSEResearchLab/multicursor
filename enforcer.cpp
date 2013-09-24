@@ -2,7 +2,7 @@
 #include "enforcer.h"
 #include "xcbutil.h"
 #include "vcursor.h"
-#include <stdio.h>
+#include <iostream>
 #include <map>
 #include <set>
 
@@ -14,6 +14,16 @@ static std::set<uint32_t> forbidden;		// List of un-ownable window id's
 static std::map<uint32_t, int> owners;		// Map containing window=>owner
 static bool firstTime = true;     			// First time connecting
 Enforcer * Enforcer::enforcer = NULL;		// Line fixes link error. May not be needed.
+
+void Enforcer::print ( )  {
+
+	for ( owners_iter itr = owners.begin(); itr != owners.end(); itr++ ) 
+		cout << itr->first << " " << itr->second << endl;
+
+
+
+}
+
 
 Enforcer::Enforcer ( ) {
 	// Add the root window (desktop) to forbidden
@@ -35,6 +45,8 @@ Enforcer * Enforcer::getEnforcer ( ) {
 	There can only be one owner per window. */
 bool Enforcer::isOwner ( uint32_t winId, int mouseId ) {
 	// Check if forbidden, if so return false
+	cout << "BEFORE" << endl;
+	print ( );
 	if ( forbidden.find ( winId ) != forbidden.end ( ) )
 		return false;
 
@@ -63,7 +75,6 @@ void Enforcer::clean ( int mouseId ) {
 		// If the owner is mouseId, remove the element
 		// This frees the ownership on that window
 		if ( itr->second == mouseId )
-			printf("deleting %i entry", mouseId);
-			owners.erase ( itr++ );
+			owners.erase ( itr );
 	}
 }
