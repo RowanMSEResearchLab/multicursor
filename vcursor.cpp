@@ -92,14 +92,19 @@ pair<int,int> Vcursor::getPosition( ) {
 
 // Move the cursor to the specified location
 void Vcursor::move ( int x, int y ) {
+	int transX = x - xpos;
+	int transY = y - ypos;
 	xpos = x;
 	ypos = y;
 	moveWindow( windowId, x, y );
 	if(isMouseDown)
 	{
 		uint32_t underlyingWin = xcbGetWinIdByCoord(x-1,y-1);
+        pair<int,int> coords = xcbGetWinCoordsById(underlyingWin);
+        int dragX = transX+coords.first;
+        int dragY = transY+coords.second;
 		xcbHideWindow(underlyingWin);
-		moveWindow(underlyingWin, x, y);
+		moveWindow(underlyingWin, dragX, dragY);
 		xcbShowWindow(underlyingWin);
 	}
 }

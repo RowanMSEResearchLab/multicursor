@@ -61,4 +61,6 @@ xcb_connection_t * xcbGetDisplay ( );
 
 const uint32_t toTopVals[] = { XCB_STACK_MODE_ABOVE };
 
+pair<int,int> xcbGetWinCoordsById( uint32_t id );
+
 #endif

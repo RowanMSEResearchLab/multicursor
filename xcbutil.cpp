@@ -226,3 +226,15 @@ uint32_t xcbGetWinIdByCoord( int x, int y )
 xcb_connection_t * xcbGetDisplay ( ) {
 	return display;
 }
+
+pair<int,int> xcbGetWinCoordsById( uint32_t id )
+{
+   xcb_get_geometry_reply_t *geom = xcb_get_geometry_reply (display, xcb_get_geometry (display, id), NULL);
+   xcb_query_tree_reply_t *tree = xcb_query_tree_reply (display, xcb_query_tree (display, id), NULL);
+
+   xcb_translate_coordinates_cookie_t translateCookie = xcb_translate_coordinates (display, id, tree->parent, geom->x, geom->y);
+
+   xcb_translate_coordinates_reply_t *trans = xcb_translate_coordinates_reply (display, translateCookie, NULL);
+   
+   return pair<int,int>(trans->dst_x,trans->dst_y);
+}
