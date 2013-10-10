@@ -92,6 +92,7 @@ void ServerThread::mouseDown ( int x, int y, int buttonId ) {
 void ServerThread::processEvent ( MouseEvent & event ) {
 	if ( event.type == MC_BUTTON_MOVE ) {
 		mouseMove( event.x, event.y );
+		cout << "NORMAL MOVE!" << endl;
 	} else if ( event.type == MC_TERMINATE ) {
 		enforcer->clean ( event.mouseId );
 		terminated = true;
@@ -111,6 +112,7 @@ void ServerThread::processEvent ( MouseEvent & event ) {
     	
     			case MC_BUTTON_MOVE:
     				mouseMove( event.x, event.y );
+    				cout << "OWNER MOVE!" << endl;
     				break;
 		}
 	} else {
