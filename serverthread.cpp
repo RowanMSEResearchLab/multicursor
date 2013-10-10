@@ -113,8 +113,7 @@ void ServerThread::processEvent ( MouseEvent & event ) {
     				mouseMove( event.x, event.y );
     				break;
 		}
-	}
-	else {
+	} else {
 		enforcer->print ( );
 	}
 }
