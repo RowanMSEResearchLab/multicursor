@@ -105,24 +105,20 @@ void ServerThread::processEvent ( MouseEvent & event ) {
 		enforcer->clean ( event.mouseId );
 		terminated = true;
 		rSocket.close();
+	} else if ( event.type == MC_BUTTON_UP ) {
+		mouseUp (event.x, event.y, 1 );
+		m_down = false;
+		this_win = -1;
 	} else if ( enforcer->isOwner ( xcbGetWinIdByCoord( event.x, event.y ), event.mouseId ) ) { 
 		//enforcer->print ( );
     		switch ( event.type ) {
-    	
-    			case MC_BUTTON_UP:
-    				// cout << "Clicking mouse at " << event.x << " " << event.y << endl;
-    				mouseUp ( event.x, event.y, 1 );
-					m_down = false;
-					this_win = -1;
-    				break;
-    	
     			case MC_BUTTON_DOWN:
     				mouseDown ( event.x, event.y, 1 );
-					if ( enforcer->isOwner ( xcbGetWinIdByCoord( event.x, event.y ), event.mouseId ) )
-						this_win = xcbGetWinIdByCoord ( event.x, event.y );
+				//	if ( enforcer->isOwner ( xcbGetWinIdByCoord( event.x, event.y ), event.mouseId ) )
 					m_down = true;
+					this_win = xcbGetWinIdByCoord ( event.x, event.y );
     				break;
-			}
+   		}
 	} else {
 		cout << "ERRORORRORORORRORORORORORORRORORORORORROROROROEEOEEEERRRRROOOOORRRRRR" << endl;
 	}
