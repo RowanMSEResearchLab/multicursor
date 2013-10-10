@@ -6,6 +6,8 @@
 using namespace std;
 
 boost::interprocess::interprocess_semaphore ServerThread::mutex ( 1 );
+bool m_down = false;
+uint32_t this_win = -1;
 
 // Create and initialize the thread
 ServerThread::ServerThread ( tcp::socket & socket ) : rSocket ( socket ) {
@@ -92,31 +94,37 @@ void ServerThread::mouseDown ( int x, int y, int buttonId ) {
 void ServerThread::processEvent ( MouseEvent & event ) {
 	if ( event.type == MC_BUTTON_MOVE ) {
 		mouseMove( event.x, event.y );
-		cout << "NORMAL MOVE!" << endl;
+		if ( m_down &&  enforcer->isOwner ( this_win, event.mouseId ) ) {
+			pair<int,int> mpos = cursor->getPosition();
+			xcbHideWindow ( this_win );
+			xcbMove( mpos.first, mpos.second );
+			moveWindow ( this_win, mpos.first, mpos.second );
+			xcbShowWindow ( this_win );
+		}
 	} else if ( event.type == MC_TERMINATE ) {
 		enforcer->clean ( event.mouseId );
 		terminated = true;
 		rSocket.close();
 	} else if ( enforcer->isOwner ( xcbGetWinIdByCoord( event.x, event.y ), event.mouseId ) ) { 
-		enforcer->print ( );
+		//enforcer->print ( );
     		switch ( event.type ) {
     	
     			case MC_BUTTON_UP:
     				// cout << "Clicking mouse at " << event.x << " " << event.y << endl;
     				mouseUp ( event.x, event.y, 1 );
+					m_down = false;
+					this_win = -1;
     				break;
     	
     			case MC_BUTTON_DOWN:
     				mouseDown ( event.x, event.y, 1 );
+					if ( enforcer->isOwner ( xcbGetWinIdByCoord( event.x, event.y ), event.mouseId ) )
+						this_win = xcbGetWinIdByCoord ( event.x, event.y );
+					m_down = true;
     				break;
-    	
-    			case MC_BUTTON_MOVE:
-    				mouseMove( event.x, event.y );
-    				cout << "OWNER MOVE!" << endl;
-    				break;
-		}
+			}
 	} else {
-		enforcer->print ( );
+		cout << "ERRORORRORORORRORORORORORORRORORORORORROROROROEEOEEEERRRRROOOOORRRRRR" << endl;
 	}
 }
 

@@ -97,16 +97,16 @@ void Vcursor::move ( int x, int y ) {
 	xpos = x;
 	ypos = y;
 	moveWindow( windowId, x, y );
-	if(isMouseDown)
-	{
-		uint32_t underlyingWin = xcbGetWinIdByCoord(x-1,y-1);
-        pair<int,int> coords = xcbGetWinCoordsById(underlyingWin);
-        int dragX = transX+coords.first;
-        int dragY = transY+coords.second;
-		xcbHideWindow(underlyingWin);
-		moveWindow(underlyingWin, dragX, dragY);
-		xcbShowWindow(underlyingWin);
-	}
+//	if(isMouseDown)
+//	{
+//		uint32_t underlyingWin = xcbGetWinIdByCoord(x-1,y-1);
+//        pair<int,int> coords = xcbGetWinCoordsById(underlyingWin);
+//        int dragX = transX+coords.first;
+//        int dragY = transY+coords.second;
+//		xcbHideWindow(underlyingWin);
+//		moveWindow(underlyingWin, dragX, dragY);
+//		xcbShowWindow(underlyingWin);
+//	}
 }
 
 // Mouse button is released 

@@ -40,13 +40,11 @@ Enforcer * Enforcer::getEnforcer ( ) {
 	return enforcer;
 }
 
-/* Very that the mouse with mouseId owns the window with winId.
+/* Verify that the mouse with mouseId owns the window with winId.
 	Return true if the mouseId owns the window, false otherwise.
 	There can only be one owner per window. */
 bool Enforcer::isOwner ( uint32_t winId, int mouseId ) {
 	// Check if forbidden, if so return false
-	cout << "BEFORE" << endl;
-	print ( );
 	if ( forbidden.find ( winId ) != forbidden.end ( ) )
 		return false;
 
