@@ -92,32 +92,30 @@ void ServerThread::mouseDown ( int x, int y, int buttonId ) {
 void ServerThread::processEvent ( MouseEvent & event ) {
 	if ( event.type == MC_BUTTON_MOVE ) {
 		mouseMove( event.x, event.y );
-    } else if ( event.type == MC_TERMINATE ) {
+	} else if ( event.type == MC_TERMINATE ) {
 		enforcer->clean ( event.mouseId );
 		terminated = true;
 		rSocket.close();
 	} else if ( enforcer->isOwner ( xcbGetWinIdByCoord( event.x, event.y ), event.mouseId ) ) { 
 		enforcer->print ( );
-    	switch ( event.type ) {
+    		switch ( event.type ) {
     	
-    	case MC_BUTTON_UP:
-    		// cout << "Clicking mouse at " << event.x << " " << event.y << endl;
-    		mouseUp ( event.x, event.y, 1 );
-    		break;
+    			case MC_BUTTON_UP:
+    				// cout << "Clicking mouse at " << event.x << " " << event.y << endl;
+    				mouseUp ( event.x, event.y, 1 );
+    				break;
     	
-    	case MC_BUTTON_DOWN:
-    		mouseDown ( event.x, event.y, 1 );
-    		break;
+    			case MC_BUTTON_DOWN:
+    				mouseDown ( event.x, event.y, 1 );
+    				break;
     	
-    	case MC_BUTTON_MOVE:
-    		mouseMove( event.x, event.y );
-    		break;
+    			case MC_BUTTON_MOVE:
+    				mouseMove( event.x, event.y );
+    				break;
 		}
 	}
 	else {
 		enforcer->print ( );
 	}
-
-
 }
 
