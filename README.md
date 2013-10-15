@@ -6,7 +6,7 @@ A solution to provide a Linux computing environment with concurrent, remote virt
 
 This build is functional and has been tested on Ubuntu 12.04 LTS using Unity/LightDM.
 
-To do:
+**To do:**
 
 1. Allow virtual cursors to relinquish ownership of a window by entering a specific key/mouse combination.
 2. Change the drag initiation combination to be Shift + RightClick instead of just RightClick.
