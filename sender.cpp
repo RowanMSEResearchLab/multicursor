@@ -14,7 +14,7 @@
 using boost::asio::ip::tcp;
 using namespace std;
 
-float xscale=0, yscale=0;					// Scaling values for getting the proper resolution
+float xscale=0, yscale=0;					// Scaling values for setting the proper resolution
 int mouseId;								// The given mouse id (provided by the server)
 bool terminated = false;					// Whether or not to terminate the connection
 
