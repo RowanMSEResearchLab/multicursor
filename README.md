@@ -8,7 +8,12 @@ This build is functional and has been tested on Ubuntu 12.04 LTS using Unity/Lig
 
 To do:
 1. Allow virtual cursors to relinquish ownership of a window by entering a specific key/mouse combination.
+
 2. Change the drag initiation combination to be Shift + RightClick instead of just RightClick.
+
 3. Implement Motif support as per the spec.
+
 4. Implement proper logging instead of just printing to the console.
+
 5. Audit the entire code base for memory leaks and unchecked errors.
+
