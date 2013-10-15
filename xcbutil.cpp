@@ -147,7 +147,8 @@ void grabMouse ( ) {
 }
 
 void moveWindow ( int id, int x, int y ) {
-    static uint32_t values[2];
+	//printf ("%d : window move\n", id );
+    uint32_t values[2];
     values[0] = x;
     values[1] = y;
     
@@ -219,7 +220,7 @@ uint32_t xcbGetWinIdByCoord( int x, int y )
 	xcbMove ( x-1, y-1 );    
     qpcookie = xcb_query_pointer ( display, theRoot );
     qpreply = xcb_query_pointer_reply ( display, qpcookie, NULL);
-	printf("%u", qpreply->child);    
+	//printf("%u", qpreply->child);    
     return qpreply->child;
 }
 

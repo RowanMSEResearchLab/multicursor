@@ -7,7 +7,6 @@ using namespace std;
 
 boost::interprocess::interprocess_semaphore ServerThread::mutex ( 1 );
 bool m_down = false;
-uint32_t this_win = -1;
 
 // Create and initialize the thread
 ServerThread::ServerThread ( tcp::socket & socket ) : rSocket ( socket ) {
@@ -94,10 +93,11 @@ void ServerThread::mouseDown ( int x, int y, int buttonId ) {
 void ServerThread::processEvent ( MouseEvent & event ) {
 	if ( event.type == MC_BUTTON_MOVE ) {
 		mouseMove( event.x, event.y );
-		if ( m_down &&  enforcer->isOwner ( this_win, event.mouseId ) ) {
+		if ( cursor->getMDown() &&  enforcer->isOwner ( this_win, event.mouseId ) ) {
 			pair<int,int> mpos = cursor->getPosition();
 			xcbHideWindow ( this_win );
-			xcbMove( mpos.first, mpos.second );
+//			xcbMove( mpos.first, mpos.second );
+			cout << "HERE HERE HERE HERE " <<  this << endl;
 			moveWindow ( this_win, mpos.first, mpos.second );
 			xcbShowWindow ( this_win );
 		}
@@ -106,18 +106,38 @@ void ServerThread::processEvent ( MouseEvent & event ) {
 		terminated = true;
 		rSocket.close();
 	} else if ( event.type == MC_BUTTON_UP ) {
-		mouseUp (event.x, event.y, 1 );
-		m_down = false;
-		this_win = -1;
-	} else if ( enforcer->isOwner ( xcbGetWinIdByCoord( event.x, event.y ), event.mouseId ) ) { 
-		//enforcer->print ( );
-    		switch ( event.type ) {
-    			case MC_BUTTON_DOWN:
-    				mouseDown ( event.x, event.y, 1 );
-				//	if ( enforcer->isOwner ( xcbGetWinIdByCoord( event.x, event.y ), event.mouseId ) )
-					m_down = true;
-					this_win = xcbGetWinIdByCoord ( event.x, event.y );
-    				break;
+		if (event.buttonId == 1) 
+			mouseUp (event.x, event.y, 1 );
+//		m_down = false;
+//		this_win = -1;
+	} else if ( event.type == MC_BUTTON_DOWN) {
+		cout << "CURRENT STATE @ EVENT START: " << cursor->getMDown() << endl;
+		if ( cursor->getMDown() && event.buttonId == 3 ) {	//already dragging; finish the drag
+				cout << "Finishing drag for " << this << " " <<  event.mouseId << endl;
+				cursor->setMDown(false);
+				this_win = -1;
+		}
+		if ( enforcer->isOwner ( xcbGetWinIdByCoord( event.x, event.y ), event.mouseId ) ) { 
+    		if ( event.buttonId == 3 ) {	//drag
+		//			if ( m_down ) {			//already dragging; finish the drag
+		//				cout << "Finishing drag for " << event.mouseId << endl;
+		//				m_down = false;
+		//				this_win = -1;
+		//			} else {				//start a drag
+						cout << "Starting drag for " << this << " "  << event.mouseId << endl;
+						cout << "Before: " << cursor->getMDown() << endl;
+						cursor->setMDown(true);
+						cout << "After: " << cursor->getMDown() << endl;
+						this_win = xcbGetWinIdByCoord ( event.x, event.y );
+		//			}
+			}
+			else  
+				mouseDown ( event.x, event.y, 1 );
+					//if ( enforcer->isOwner ( xcbGetWinIdByCoord( event.x, event.y ), event.mouseId ) )
+					//m_down = true;
+					// mouseUp (event.x, event.y, 1);
+					//this_win = xcbGetWinIdByCoord ( event.x, event.y );
+    				// break;
    		}
 	} else {
 		cout << "ERRORORRORORORRORORORORORORRORORORORORROROROROEEOEEEERRRRROOOOORRRRRR" << endl;

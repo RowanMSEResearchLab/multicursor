@@ -112,7 +112,7 @@ void Vcursor::move ( int x, int y ) {
 // Mouse button is released 
 void Vcursor::up ( int buttonId ) {
 	xcbMouseUp ( buttonId );
-	isMouseDown = false;
+	//isMouseDown = false;
   	/* When a mouse click is released all other active cursor
      	windows must be brought to the front of the screen */
 	int i;
@@ -129,6 +129,13 @@ void Vcursor::down ( int buttonId ) {
 	xcbMove( xpos-1, ypos-1 );
 //	printf("%d", getWinIdByCoord(&windowId, &xpos-1, &ypos-1));
 	xcbMouseDown ( buttonId );
-	isMouseDown = true;
+	//isMouseDown = true;
 }
 
+void Vcursor::setMDown ( bool state ) {
+	isMouseDown = state;
+}	
+
+bool Vcursor::getMDown ( ) {
+	return isMouseDown;
+}

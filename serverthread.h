@@ -45,6 +45,8 @@ private:
 
     bool terminated;
 
+	uint32_t this_win;
+
 	static boost::interprocess::interprocess_semaphore mutex;
 };
 
