@@ -15,47 +15,42 @@ void initialize ( ) {
     xcbInit ( );
 }
 
-// cleanup at the end of the program
+// Cleanup at the end of the program
 void cleanup ( ) {
     xcbDestroy ( );
-    // serverShutdown ( );
 }
 
+// Send the resolution of the wall to the user over a socket
 void sendWindowDim(tcp::socket & sock){
-    pair<int,int> dim = getResolution();
+    pair<int,int> dim = getResolution();					// Get the resolution
     
     std::vector<uint16_t> vec(2, 0);
-    vec[0] = htons(dim.first); // htons(dim[0]);
-    vec[1] = htons(dim.second); // dim[1]);
+    vec[0] = htons(dim.first); 								// x of resolution
+    vec[1] = htons(dim.second); 							// y of resolution
     
-    int num = sock.send ( boost::asio::buffer(vec) );
-    cout << "Sent dimension ( "<< dim.first << " , " << dim.second << ") " << num << " bytes" << endl;
-    
+    int num = sock.send ( boost::asio::buffer(vec) );		// Send resolution to user
 }
 
+// Start the wall and all necessary components
 int main ( int argc, char * argv[] ) {
-    
     boost::thread_group serverThreads;
-    
-    initialize ( ) ;
-    
+    initialize ( );
     try {
     	boost::asio::io_service io_service;
     	MouseEvent event;
     	
     	tcp::acceptor acceptor(io_service, tcp::endpoint(tcp::v4(), MC_PORT));
     	
+		// Loop forever waiting for new connections
     	while ( 1 ) {
-    	    
-    	    // tcp::socket socket(io_service);
+			// Create a new socket
     	    tcp::socket * pSocket = new tcp::socket (io_service);
+			// Accept the connection
     	    acceptor.accept(*pSocket); 
-    	    
     	    cout << "Accepted remote mouse connection" << endl;
-    	    
+			// Give the connection its own thread
     	    serverThreads.create_thread (ServerThread(*pSocket));
     	}
-    	
     	serverThreads.join_all ( );
     }
     catch (std::exception& exc)
@@ -63,7 +58,7 @@ int main ( int argc, char * argv[] ) {
     	cerr << exc.what() << endl;
     }
     
-    cleanup ( );
+    cleanup ( );										// Cleanup connection
     return 0;
 }
 

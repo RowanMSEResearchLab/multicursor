@@ -5,9 +5,9 @@
 
 using namespace std;
 
-static vector<Vcursor *> cursors; // Vector of all cursors
-static bool firstTime = true;     // First time connecting
-const int NUMCURSORS = 8;         // Number of cursors to spawn
+static vector<Vcursor *> cursors; 	// Vector of all cursors
+static bool firstTime = true;     	// First time connecting
+const int NUMCURSORS = 8;         	// Number of cursors to spawn
 
 // Different random colors to choose from
 static int colors [8] = { 16777215, 858083, 0, 33023, 2263842, 14772544, 14381203, 65535 };
@@ -92,30 +92,16 @@ pair<int,int> Vcursor::getPosition( ) {
 
 // Move the cursor to the specified location
 void Vcursor::move ( int x, int y ) {
-	int transX = x - xpos;
-	int transY = y - ypos;
 	xpos = x;
 	ypos = y;
 	moveWindow( windowId, x, y );
-//	if(isMouseDown)
-//	{
-//		uint32_t underlyingWin = xcbGetWinIdByCoord(x-1,y-1);
-//        pair<int,int> coords = xcbGetWinCoordsById(underlyingWin);
-//        int dragX = transX+coords.first;
-//        int dragY = transY+coords.second;
-//		xcbHideWindow(underlyingWin);
-//		moveWindow(underlyingWin, dragX, dragY);
-//		xcbShowWindow(underlyingWin);
-//	}
 }
 
 // Mouse button is released 
 void Vcursor::up ( int buttonId ) {
 	xcbMouseUp ( buttonId );
-	//isMouseDown = false;
-  	/* When a mouse click is released all other active cursor
-     	windows must be brought to the front of the screen */
 	int i;
+	// When a click is released bring all cursors to the front (in terms of z-order)
 	for ( i = 0; i < cursors.size(); i++ ) {
 		if ( !cursors[i]->isHidden( ) ) 
 			xcbPullToTop ( cursors[i]->windowId );
@@ -127,15 +113,15 @@ void Vcursor::down ( int buttonId ) {
   	/* Move system cursor to vcursor's current position -1 so
      	the vcursor window doesn't eat the event, then click */
 	xcbMove( xpos-1, ypos-1 );
-//	printf("%d", getWinIdByCoord(&windowId, &xpos-1, &ypos-1));
 	xcbMouseDown ( buttonId );
-	//isMouseDown = true;
 }
 
+// Set isMouseDown to state when a mouse click is started (true) or released (false)
 void Vcursor::setMDown ( bool state ) {
 	isMouseDown = state;
 }	
 
+// Get the current state of the virtual cursor
 bool Vcursor::getMDown ( ) {
 	return isMouseDown;
 }

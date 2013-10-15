@@ -9,58 +9,26 @@
 using std::pair;
 
 #define MC_PORT 13
-#define ROAD_CLOSED printf("THE ROAD IS CLOSED. SIGNED: THE MAYOR.\n");
+#define CONN_CLOSED printf("Remote connection disconnected.\n");
 
-// Initialize the xcb connection and xcb globals
-void xcbInit ( ) ;
+void xcbInit ( ) ; 											// Initialize the xcb connection and xcb globals
+void xcbDestroy  ( ) ;										// Tear down the XCB connection
+int getRoot ( );											// Get the id of the root window (desktop)
+void xcbClick ( int buttonId );								// Send a click event to the current location of system cursor
+void xcbMove ( int x, int y );								// Move the system cursor to the specified coords
+void xcbMouseUp ( int buttonId );							// Release a mouse click
+void xcbMouseDown ( int buttonId );							// Start a mouse click
+xcb_cursor_t createCursor (uint16_t glyph);					// Create a new cursor glyph
+void grabMouse ( ) ;										// Grab the system cursor
+void moveWindow ( int id, int x, int y );					// Move a window to the specified coordinates
+void xcbShowWindow ( uint32_t id );							// Make a window visible
+void xcbHideWindow ( uint32_t winId );						// Make a window invisible
+void xcbPullToTop ( uint32_t winId );						// Bring a window to the front of the screen (in terms of z-order)
+pair<int,int> getResolution();								// Get the resolution of the screen
+uint32_t xcbCreateWindow ( int );							// Create a new window
+uint32_t xcbGetWinIdByCoord( int x, int y);					// Get id of window at the specified coordinates
+xcb_connection_t * xcbGetDisplay ( );						// Get the XCB display connection
 
-void xcbDestroy  ( ) ;
-
-int getRoot ( );
-
-// xcb function that clicks button at the current location
-void xcbClick ( int buttonId );
-
-// xcb function that moves the cursor to the given location
-void xcbMove ( int x, int y );
-
-void xcbMouseUp ( int buttonId ) ;
-
-void xcbMouseDown ( int buttonId ) ;
-
-// Creates specified cursor
-xcb_cursor_t createCursor (uint16_t glyph);
-
-// Gain full control of mouse
-// Receive notifications for button press, button release 
-// and mouse motion
-void grabMouse ( ) ;
-
-void moveWindow ( int id, int x, int y );
-
-void xcbShowWindow ( uint32_t id );
-
-void xcbHideWindow ( uint32_t winId );
-
-void xcbPullToTop ( uint32_t winId );
-
-
-/**
-	gets the resolution of the root window
-*/
-pair<int,int> getResolution();
-
-uint32_t xcbCreateWindow ( int );
-
-uint32_t xcbGetWinIdByCoord( int x, int y);
-
-xcb_connection_t * xcbGetDisplay ( );
-
-//extern xcb_connection_t * display; 	//xcb methods should flush display
-//extern int theRoot; // Root window
-
-const uint32_t toTopVals[] = { XCB_STACK_MODE_ABOVE };
-
-pair<int,int> xcbGetWinCoordsById( uint32_t id );
+const uint32_t toTopVals[] = { XCB_STACK_MODE_ABOVE };		// Values for bringing a window to the front of the screen
 
 #endif

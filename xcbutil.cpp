@@ -1,6 +1,4 @@
-#include <stdio.h>	//xcb methods should flush display
-
-
+#include <stdio.h>
 #include <unistd.h>
 #include <string.h>
 #include <stdlib.h>
@@ -8,41 +6,17 @@
 #include "xcbutil.h"
 
 // XCB globals
-xcb_connection_t * display = (xcb_connection_t *) NULL;
-int screen_number = 0;
-xcb_setup_t *setup;
-xcb_screen_iterator_t screen_iter;
-int theRoot;
+xcb_connection_t * display = (xcb_connection_t *) NULL;			// The XCB connection to the display
+int screen_number = 0;											// The screen number
+xcb_setup_t *setup;												// The XCB setup
+xcb_screen_iterator_t screen_iter;								// The XCB screen iterator
+int theRoot;													// The root window (desktop)
 
-/*
-//sets the cursorNumberth cursor to active
-void setCursorActive(int cursorNumber)
-{
-ACTIVE_CURSORS |= 1<<cursorNumber;
-}
-
-//sets the cursorNumberth cursor to inactive
-void setCursorInactive(int cursorNumber)
-{
-ACTIVE_CURSORS &= ~(1<<cursorNumber);
-}
-
-//sees if the cursorNumberth bit is set to active
-//returns 1 if that cursor is active, 0 otherwise
-int isActiveCursor(int cursorNumber)
-{
-return (ACTIVE_CURSORS & (1<<cursorNumber)) != 0 ? 1 : 0;
-}
-
-*/
-
-// Initialize the xcb connection and xcb globals
+// Initialize the XCB connection and xcb globals
 void xcbInit ( ) {
-    
     display = xcb_connect ( NULL, &screen_number);
     if (xcb_connection_has_error(display)) {
     	fprintf (stderr, "Unable to open display\n");
-    	
     	exit (1);
     }
     setup = (xcb_setup_t *) xcb_get_setup ( display );
@@ -52,49 +26,52 @@ void xcbInit ( ) {
     for (i = 0; i < screen_number; i++)
     	xcb_screen_next(&screen_iter);
     theRoot = screen_iter.data->root;
-    
 }
 
+// Get the id of the root window
 int getRoot()
 {
-    if(display == NULL)
-    	xcbInit();
+    if(display == NULL)											// If the display hasnt been initialized yet
+    	xcbInit();												// then initialize it
     return theRoot;
 }
 
+// Tear down the XCB connection to the display
 void xcbDestroy  ( ) {
     xcb_disconnect ( display );
 }
 
-// xcb function that clicks button at the current location
+// Send a click event at the current location of the system cursor
 void xcbClick ( int buttonId ) {
-    
     xcb_test_fake_input( display, XCB_BUTTON_PRESS, buttonId, 0, XCB_NONE, 0, 0, 0 );
     xcb_test_fake_input( display, XCB_BUTTON_RELEASE, buttonId, 0, XCB_NONE, 0, 0, 0 );
-    
 }
 
+// Release a mouse click at the current location of the system cursor
 void xcbMouseUp ( int buttonId ) {
     xcb_test_fake_input( display, XCB_BUTTON_RELEASE, buttonId, 0, XCB_NONE, 0, 0, 0 );
    	xcb_flush ( display ); 
 }
 
+// Start a mouse click at the current location of the system cursor
 void xcbMouseDown ( int buttonId ) {
     xcb_test_fake_input( display, XCB_BUTTON_PRESS, buttonId, 0, XCB_NONE, 0, 0, 0 );
    	xcb_flush ( display ); 
 }
 
-// xcb function that moves the cursor to the given location
+// Move the system cursor to the given coordinates
 void xcbMove ( int x, int y ) {
     xcb_test_fake_input ( display, XCB_MOTION_NOTIFY, 0, 0, theRoot, x, y, 0);
 	xcb_flush ( display );
 }
-// Pulls a window to the top of the screen (ensures visibility above other windows)
+
+// Brings the given window above all other open windows (in terms of z-order)
 void xcbPullToTop ( uint32_t winId ) {
 	xcb_configure_window ( display, winId, XCB_CONFIG_WINDOW_STACK_MODE, toTopVals );
 	xcb_flush ( display );
 }
 
+// Creates a new cursor glyph
 xcb_cursor_t createCursor ( uint16_t glyph)
 {
     static xcb_font_t cursor_font;
@@ -114,17 +91,17 @@ xcb_cursor_t createCursor ( uint16_t glyph)
     return cursor;
 }
 
+// Processes and prints errors then exits
 void Fatal_Error ( const char * message ) {
     printf ("%s\n", message);
     exit ( 0 );
 }
 
+// Grabs the system cursor
 void grabMouse ( ) {
-    
     xcb_cursor_t cursor;
     cursor = createCursor ( XC_pirate );
     xcb_grab_pointer_cookie_t gpcookie;
-    
     gpcookie = xcb_grab_pointer(
     	display,
     	0,
@@ -146,8 +123,8 @@ void grabMouse ( ) {
     	Fatal_Error ("Can't grab the mouse.");
 }
 
+// Moves the specified window to the specified coordinates
 void moveWindow ( int id, int x, int y ) {
-	//printf ("%d : window move\n", id );
     uint32_t values[2];
     values[0] = x;
     values[1] = y;
@@ -156,6 +133,7 @@ void moveWindow ( int id, int x, int y ) {
     xcb_flush ( display );
 }
 
+// Gets the resolution of the display
 pair<int,int> getResolution()
 {
     xcb_get_geometry_cookie_t  geomCookie =
@@ -170,18 +148,21 @@ pair<int,int> getResolution()
     return pair<int,int>(geom->width,geom->height);
 }
 
+// Makes a window invisible
 void xcbHideWindow( uint32_t windowId )
 {
 	xcb_unmap_window(display, windowId);
 	xcb_flush ( display );	
 }
 
+// Makes a window visible
 void xcbShowWindow( uint32_t windowId )
 {
 	xcb_map_window(display, windowId);
 	xcb_flush ( display );
 }
 
+// Creates a new window with the specified color
 xcb_window_t xcbCreateWindow ( int color ) {
 	const xcb_setup_t *setup = xcb_get_setup ( display );
 	xcb_screen_iterator_t iter = xcb_setup_roots_iterator ( setup );
@@ -190,28 +171,24 @@ xcb_window_t xcbCreateWindow ( int color ) {
 	uint32_t mask = XCB_GC_FOREGROUND | XCB_GC_GRAPHICS_EXPOSURES;
 	uint32_t values[2] = {color, 0};
 
-	// PROBLEM! CAUTION! ACHTUNG! ADVERTENCIA!
 	xcb_window_t window = xcb_generate_id ( display );
-	// PROBLEM! CAUTION! ACHTUNG! ADVERTENCIA!
 
 	mask = XCB_CW_BACK_PIXEL | XCB_CW_EVENT_MASK;
-
 	values[1] = XCB_EVENT_MASK_EXPOSURE;
-	
-	xcb_create_window (display,                    /* Connection          */
-                           XCB_COPY_FROM_PARENT,          /* depth (same as root)*/
-                           window,                        /* window Id           */
-                           screen->root,                  /* parent window       */
-                           0, 0,                          /* x, y                */
-                           64, 64,                      /* width, height       */
-                           10,                            /* border_width        */
-                           XCB_WINDOW_CLASS_INPUT_OUTPUT, /* class               */
-                           screen->root_visual,           /* visual              */
-                           mask, values );                     /* masks, not used yet */
+	xcb_create_window (display,                    				/* Connection          */
+                           XCB_COPY_FROM_PARENT,          		/* depth (same as root)*/
+                           window,                        		/* window Id           */
+                           screen->root,                  		/* parent window       */
+                           0, 0,                          		/* x, y                */
+                           40, 40,                      		/* width, height       */
+                           10,                            		/* border_width        */
+                           XCB_WINDOW_CLASS_INPUT_OUTPUT, 		/* class               */
+                           screen->root_visual,           		/* visual              */
+                           mask, values );                     	/* masks, not used yet */
 	return window;
 }
 
-//Must call move() on system cursor before getting coords
+// Gets the id of the window that is currently at the specified coordinates
 uint32_t xcbGetWinIdByCoord( int x, int y )
 {
     xcb_query_pointer_cookie_t qpcookie;
@@ -220,22 +197,12 @@ uint32_t xcbGetWinIdByCoord( int x, int y )
 	xcbMove ( x-1, y-1 );    
     qpcookie = xcb_query_pointer ( display, theRoot );
     qpreply = xcb_query_pointer_reply ( display, qpcookie, NULL);
-	//printf("%u", qpreply->child);    
     return qpreply->child;
 }
 
+// Gets the XCB display connection
 xcb_connection_t * xcbGetDisplay ( ) {
 	return display;
 }
 
-pair<int,int> xcbGetWinCoordsById( uint32_t id )
-{
-   xcb_get_geometry_reply_t *geom = xcb_get_geometry_reply (display, xcb_get_geometry (display, id), NULL);
-   xcb_query_tree_reply_t *tree = xcb_query_tree_reply (display, xcb_query_tree (display, id), NULL);
 
-   xcb_translate_coordinates_cookie_t translateCookie = xcb_translate_coordinates (display, id, tree->parent, geom->x, geom->y);
-
-   xcb_translate_coordinates_reply_t *trans = xcb_translate_coordinates_reply (display, translateCookie, NULL);
-   
-   return pair<int,int>(trans->dst_x,trans->dst_y);
-}

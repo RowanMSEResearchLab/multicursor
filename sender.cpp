@@ -1,17 +1,6 @@
-//
-// client.cpp
-// ~~~~~~~~~~
-//
-// Copyright (c) 2003-2011 Christopher M. Kohlhoff (chris at kohlhoff dot com)
-//
-// Distributed under the Boost Software License, Version 1.0. (See accompanying
-// file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
-//
-
 #include <iostream>
 #include <boost/array.hpp>
 #include <boost/asio.hpp>
-
 #include <stdio.h>
 #include <xcb/xcb.h>
 #include <xcb/xtest.h>
@@ -19,27 +8,25 @@
 #include <string.h>
 #include <stdlib.h>
 #include <errno.h>
-
 #include "xcbutil.h"
 #include "mouse.h"
 
 using boost::asio::ip::tcp;
 using namespace std;
 
-float xscale=0, yscale=0;
-int mouseId;
-bool terminated = false;
+float xscale=0, yscale=0;					// Scaling values for getting the proper resolution
+int mouseId;								// The given mouse id (provided by the server)
+bool terminated = false;					// Whether or not to terminate the connection
 
 // Perform all necessary initializations
 void initialize ( ) {
     xcbInit ( );
-    // serverInit () ;
-    
 }
 
+// Initialize the network
 void initNetwork ( char * ip ) {
     boost::asio::io_service io_service;
-    
+
     tcp::resolver resolver(io_service);
     tcp::resolver::query query(ip, "daytime");
     tcp::resolver::iterator endpoint_iterator = resolver.resolve(query);
@@ -54,13 +41,11 @@ void initNetwork ( char * ip ) {
     }
     if (error)
     	throw boost::system::system_error(error);
-    // return socket;
-    
-    
 }
 
 MouseEvent event;
 
+// Send an event over the socket
 void send ( tcp::socket & sock) {
     
     cout << "Sending : " << event.type << " " << event.mouseId << " " 
@@ -68,91 +53,80 @@ void send ( tcp::socket & sock) {
     
     std::vector<uint16_t> vec(sizeof(MouseEvent)/sizeof(uint16_t),0);
     
+	// Create the event and convert to network order
     vec[0] = htons(event.type);
     vec[1] = htons(event.mouseId);
     vec[2] = htons(event.buttonId);
     vec[3] = htons(event.x);
     vec[4] = htons(event.y);
-    
-    
-    //boost::asio::const_buffers_1 mybuf(vec); // = boost::asio::buffer buffer;
-    
-    
-    // asio::async_write(socket,buffer((char*)&net.front(),6),callback);
-    /* boost::system::error_code error;
-    
-    boost::asio::io_service io_service;
-    boost::asio::ip::tcp::socket sock (io_service); */
-	//if(!terminated)
-	//{
-    		int num = sock.send ( boost::asio::buffer(vec) );
-    		cout << "Sent " << num << " bytes" << endl;
-	//}
+	// Send the event
+    int num = sock.send ( boost::asio::buffer(vec) );
+	cout << "Sent " << num << " bytes" << endl;
 }
 
+// Send a mouse move event
 void sendMouseMove (tcp::socket & sock, int x, int y ) {
-    
+	// Create the event
     event.type = MC_BUTTON_MOVE;
     event.mouseId = mouseId;
     event.buttonId = 1;
     event.x = x * xscale;
     event.y = y * yscale;
-    send (sock );
-    
+	// Send the event
+    send ( sock );
 }
 
+// Send a mouse down event
 void sendMouseDown (tcp::socket & sock, int x, int y, int detail) {
-    
+	// Create the event
     event.type = MC_BUTTON_DOWN;
     event.mouseId = mouseId;
     event.buttonId = detail;
     event.x = x;
     event.y = y;
+	// Send the event
     send ( sock );
 }
 
+// Send a mouse up event
 void sendMouseUp (tcp::socket & sock, int x, int y, int detail) {
-    
+	// Create the event
     event.type = MC_BUTTON_UP;
     event.mouseId = mouseId;
     event.buttonId = detail;
     event.x = x;
     event.y = y;
+	// Send the event
     send ( sock );    
-    
 }
 
-//TODO  void getWindowDim( tcp::socket & socket, pair<int,int> & dim, int & mouseID){
+// Get the resolution of the screen
 void getWindowDim( tcp::socket & socket, int * dim ){
 	boost::system::error_code error;
 	vector<uint16_t> vec(3, 0);
 
 	std::size_t length = boost::asio::read(socket, boost::asio::buffer(vec), boost::asio::transfer_all(), error);
 
-	
-/*
-	dim.first = ntohs( vec[0] );
-	dim.second = ntohs ( vec[1] );
-
-*/
-	dim[0] = ntohs( vec[0] );
-	dim[1] = ntohs ( vec[1] );
-	mouseId = ntohs (vec[2]);
+	dim[0] = ntohs ( vec[0] );					// x of resolution
+	dim[1] = ntohs ( vec[1] );					// y of resolution
+	mouseId = ntohs ( vec[2] );					// id of virtual cursor associated with sender
 }
 
+// Tear down the connection
 void terminate(tcp::socket & sock)
 {
+	// Create the termination event
 	event.type = MC_TERMINATE;
 	event.mouseId = mouseId;
 	event.buttonId = 2;
 	event.x = 0;
 	event.y = 0;
+	// Send the termination event
 	send(sock);
 }
 
 int main(int argc, char* argv[])
 {
-    
     initialize ( );
     grabMouse ( );
     try
@@ -184,14 +158,10 @@ int main(int argc, char* argv[])
 
 	int dim[2];
 	getWindowDim(socket, dim);
-	// TODO getWindowDim(socket, dim, mouseId);
-
 	cout << "dim: " << dim[0] << " " << dim[1] << endl;
-	
 	pair<int,int> dimNative = getResolution();
 	xscale = dim[0] / (float) dimNative.first;
 	yscale = dim[1] / (float) dimNative.second;
-
     	
 	xcb_generic_event_t * event;
 	
@@ -202,38 +172,26 @@ int main(int argc, char* argv[])
 	    switch (event->response_type & ~0x80) {
 	    	
 	    case XCB_BUTTON_PRESS:
-	    	// printf ("Ouch\n");  // Illustration of different processing for different events
 	    	xcb_button_press_event_t *press;
-	    	
 	    	press = (xcb_button_press_event_t *) event;
 	    	sendMouseDown (socket, press->event_x, press->event_y, press->detail );
-
 	    	break;
 	    	
 	    case XCB_BUTTON_RELEASE: 
 	    	xcb_button_press_event_t *release;
-		
-	    	
 	    	release = (xcb_button_press_event_t *) event;
 	    	sendMouseUp (socket, release->event_x, release->event_y, release->detail );
-		if(release->detail == 2)
-		{
-			terminate(socket);
-			terminated = true;
-			return 0;
-		}
-	    	// getMouseLocation (&windowId, &lx, &ly);
-	    	// printf ("Inside window %d at (%d, %d)\n", windowId, lx, ly);
-
+			if(release->detail == 2)
+			{
+				terminate(socket);
+				terminated = true;
+				return 0;
+			}
 	    	break;
-	    	
 	    	
 	    case XCB_MOTION_NOTIFY:
 	    	xcb_motion_notify_event_t *motion;
 	    	motion = (xcb_motion_notify_event_t *)event;
-	    	//cout << "Motion " << motion->event_x << " " 
-	    	//<< motion->event_y <<endl;
-	    	
 	    	sendMouseMove (socket, motion->event_x, motion->event_y );
 	    	break;
 	    	
@@ -241,8 +199,6 @@ int main(int argc, char* argv[])
 	    	break;
 	    }
 	}
-	//xcb_flush(display);
-	//socket.close();
     }
     catch (std::exception& e)
     {

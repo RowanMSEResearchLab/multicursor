@@ -15,22 +15,13 @@ static std::map<uint32_t, int> owners;		// Map containing window=>owner
 static bool firstTime = true;     			// First time connecting
 Enforcer * Enforcer::enforcer = NULL;		// Line fixes link error. May not be needed.
 
-void Enforcer::print ( )  {
-
-	for ( owners_iter itr = owners.begin(); itr != owners.end(); itr++ ) 
-		cout << itr->first << " " << itr->second << endl;
-
-
-
-}
-
-
+// Create a new enforcer
 Enforcer::Enforcer ( ) {
 	// Add the root window (desktop) to forbidden
 	forbidden.insert ( getRoot() );
 }
 
-/* Returns an instance of Enforcer */
+// Returns a reference to the Enforcer
 Enforcer * Enforcer::getEnforcer ( ) {
 	// If its the first time, create the new enforcer
 	if ( firstTime ) {

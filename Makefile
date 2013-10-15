@@ -6,11 +6,6 @@ LDFLAGS = `pkg-config --libs $(PKGS)` $(EXTRALIBS)
 
 all: wall sender 
 
-receiver: receiver.o 
-	$(CC) -g -o $@ receiver.o $(LDFLAGS)
-
-receiver.o:  receiver.c
-
 wall: wall.o  xcbutil.o serverthread.o vcursor.o enforcer.o
 	$(CC) -g -o $@ wall.o xcbutil.o serverthread.o vcursor.o enforcer.o $(LDFLAGS)
 
