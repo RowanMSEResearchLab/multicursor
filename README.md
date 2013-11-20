@@ -13,4 +13,5 @@ This build is functional and has been tested on Ubuntu 12.04 LTS using Unity/Lig
 3. Implement Motif support as per the spec.
 4. Implement proper logging instead of just printing to the console.
 5. Audit the entire code base for memory leaks and unchecked errors.
+6. Visually display ownership with, for example, colored borders around owned windows.
 
